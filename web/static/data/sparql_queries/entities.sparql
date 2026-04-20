@@ -1,0 +1,61 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX schema: <http://schema.org/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX oboInOwl: <http://www.geneontology.org/formats/oboInOwl#>
+
+SELECT DISTINCT ?entity ?entityLabel ?entityDescription WHERE {
+  FILTER (isIRI(?entity))  # Exclude blank nodes
+
+  # Allow labels with either "en" language tag or no language tag
+  {
+    ?entity rdfs:label ?entityLabel .
+    FILTER (LANG(?entityLabel) = "en" || LANG(?entityLabel) = "")
+  } UNION {
+    ?entity skos:prefLabel ?entityLabel .
+    FILTER (LANG(?entityLabel) = "en" || LANG(?entityLabel) = "")
+  } UNION {
+    ?entity dct:title ?entityLabel .
+    FILTER (LANG(?entityLabel) = "en" || LANG(?entityLabel) = "")
+  } UNION {
+    ?entity schema:name ?entityLabel .
+    FILTER (LANG(?entityLabel) = "en" || LANG(?entityLabel) = "")
+  } UNION {
+    ?entity foaf:name ?entityLabel .
+    FILTER (LANG(?entityLabel) = "en" || LANG(?entityLabel) = "")
+  } UNION {
+    ?entity dc:title ?entityLabel .
+    FILTER (LANG(?entityLabel) = "en" || LANG(?entityLabel) = "")
+  } UNION {
+    ?entity oboInOwl:hasHumanReadableId ?entityLabel .  # Include Human Readable ID as a possible label
+  }
+
+  # Descriptions: Allow English or no language
+  {
+    ?entity skos:definition ?entityDescription .
+    FILTER (LANG(?entityDescription) = "en" || LANG(?entityDescription) = "")
+  } UNION {
+    ?entity rdfs:comment ?entityDescription .
+    FILTER (LANG(?entityDescription) = "en" || LANG(?entityDescription) = "")
+  } UNION {
+    ?entity dct:description ?entityDescription .
+    FILTER (LANG(?entityDescription) = "en" || LANG(?entityDescription) = "")
+  } UNION {
+    ?entity schema:description ?entityDescription .
+    FILTER (LANG(?entityDescription) = "en" || LANG(?entityDescription) = "")
+  } UNION {
+    ?entity foaf:description ?entityDescription .
+    FILTER (LANG(?entityDescription) = "en" || LANG(?entityDescription) = "")
+  } UNION {
+    ?entity dc:description ?entityDescription .
+    FILTER (LANG(?entityDescription) = "en" || LANG(?entityDescription) = "")
+  } UNION {
+    ?entity oboInOwl:hasDefinition ?entityDescription .  # Include ontology definitions as descriptions
+  }
+
+  # Ensure at least a label or description is present
+  FILTER (BOUND(?entityLabel) || BOUND(?entityDescription))
+}
+LIMIT 1000

@@ -1,0 +1,129 @@
+{{ define "mapping-rows" }}
+
+{{ if not .Partial }}
+<table class="table table-compact table-fixed w-full">
+    <thead class="sticky top-0 z-40 bg-base-100 text-base-content">
+        <tr>
+            <th class="w-3/12">Entity / Category / Relation</th>
+            <th class="w-4/12">Ontology Term</th>
+            <th class="w-4/12">Ontology URI</th>
+            <th class="w-[5rem] sm:w-[6rem] text-right">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ end }}
+        {{ range .Rows }}
+        <tr id="mapping-{{ .ID }}">
+            <input type="hidden" name="ids" value="{{ .ID }}">
+            <input type="hidden" name="labels" value="{{ .RawLabel }}">
+            <input type="hidden" name="uris" value="{{ .URI }}">
+            <input type="hidden" name="terms" value="{{ .OntoTerm }}">
+            <input type="hidden" name="descriptions" value="{{ .Description }}">
+            <td>
+                <div class="flex space-x-2">
+                    <div class="tooltip tooltip-bottom w-full max-w-sm" data-tip="{{ .RawLabel }}">
+                        <p
+                           class="badge badge-outline {{if not .IsRelation }}badge-primary{{ else }}badge-secondary{{ end }} text-sm w-full text-left overflow-hidden whitespace-nowrap text-ellipsis justify-start">
+                            {{ .RawLabel }}
+                        </p>
+                    </div>
+                </div>
+            </td>
+            <td class="relative">
+                <fieldset class="w-full"
+                          x-data="{ isFocused: false }"
+                          @focusin="isFocused = true"
+                          @click.away="setTimeout(() => isFocused = false, 100)">
+                    <div class="relative w-full">
+                        <input
+                               id="mapping-search-term-{{ .ID }}"
+                               name="mapping-search-term-{{ .ID }}"
+                               class="input input-sm text-sm w-full pr-8"
+                               type="text"
+                               value="{{ .OntoTerm }}"
+                               placeholder="Search for Ontology Terms"
+                               autocomplete="off"
+                               @keydown.enter.prevent
+                               hx-trigger="input changed delay:200ms, focus once"
+                               hx-post="/tool/ontology-mapping/search-terms"
+                               hx-target="#mapping-search-results-{{ .ID }}"
+                               hx-vals='{"mapping-input-search-term-id": "{{ .ID }}"}'
+                               hx-swap="innerHTML"
+                               hx-indicator="#spinner-{{ .ID }}" />
+                        <div id="spinner-{{ .ID }}" class="absolute right-2 top-1/2 -translate-y-1/2 htmx-indicator">
+                            <svg class="animate-spin h-4 w-4 text-base-content/60"
+                                 fill="currentColor" viewBox="0 0 32 32"
+                                 xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.28">
+                                <path
+                                      d="M16 0.75c-0.69 0-1.25 0.56-1.25 1.25s0.56 1.25 1.25 1.25v0c7.042 0.001 12.75 5.71 12.75 12.751 0 3.521-1.427 6.709-3.734 9.016v0c-0.226 0.226-0.365 0.538-0.365 0.883 0 0.69 0.56 1.25 1.25 1.25 0.346 0 0.659-0.14 0.885-0.367l0-0c2.759-2.76 4.465-6.572 4.465-10.782 0-8.423-6.828-15.251-15.25-15.251h-0z">
+                                </path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="mapping-search-results-{{ .ID }}" x-show="isFocused">
+                        <!-- Populated dynamically -->
+                    </div>
+                </fieldset>
+            </td>
+            <td>
+                <div class="tooltip tooltip-bottom w-full break-words max-w-sm z-30" data-tip="{{ .URI }}">
+                    <p class="text-sm text-base-content/60 truncate mt-auto">
+                        <a target="_blank" class="link link-hover" href="{{ .URI }}">{{ .URI }}</a>
+                    </p>
+                </div>
+            </td>
+            <td class="flex text-center px-1 gap-1 items-center justify-end max-w-[6rem] sm:max-w-[8rem]">
+                {{ if not .IsRelation }}
+                <div class="tooltip tooltip-bottom w-full break-words max-w-sm z-30"
+                     data-tip="Replace With Ontology Term">
+                    <input
+                           class="checkbox checkbox-sm checkbox-primary"
+                           id="mapping-checkbox-replace-{{ .ID }}"
+                           name="mapping-checkbox-replace-{{ .ID }}"
+                           type="checkbox"
+                           {{ if .Replace }}checked{{ end }}
+                           hx-put="/tool/ontology-mapping/mappings/{{ .ID }}"
+                           hx-trigger="change"
+                           hx-target="#mapping-{{ .ID }}"
+                           hx-swap="outerHTML"
+                           hx-vals='{"id": "{{ .ID }}", "uri": "{{ .URI }}"}'
+                           hx-params="mapping-checkbox-invert-{{ .ID }}, mapping-checkbox-replace-{{ .ID }}, id, uri" />
+                </div>
+                {{ else }}
+                <div class="tooltip tooltip-bottom w-full break-words max-w-sm z-30"
+                     data-tip="Invert Relation Direction">
+                    <input
+                           class="checkbox checkbox-sm checkbox-secondary"
+                           id="mapping-checkbox-invert-{{ .ID }}"
+                           name="mapping-checkbox-invert-{{ .ID }}"
+                           type="checkbox"
+                           {{ if .Invert }}checked{{ end }}
+                           hx-put="/tool/ontology-mapping/mappings/{{ .ID }}"
+                           hx-trigger="change"
+                           hx-target="#mapping-{{ .ID }}"
+                           hx-swap="outerHTML"
+                           hx-vals='{"id": "{{ .ID }}", "uri": "{{ .URI }}"}'
+                           hx-params="mapping-checkbox-invert-{{ .ID }}, mapping-checkbox-replace-{{ .ID }}, id, uri" />
+                </div>
+                {{ end }}
+                <div class="tooltip tooltip-bottom w-full break-words max-w-sm z-30" data-tip="Delete Mapping">
+                    <button class="btn btn-ghost btn-xs px-1 text-base-content/60 hover:text-error"
+                            type="button"
+                            hx-delete="/tool/ontology-mapping/mappings/{{ .ID }}"
+                            hx-target="#mapping-{{ .ID }}"
+                            hx-swap="outerHTML swap:100ms">
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        {{ end }}
+        {{ if not .Partial }}
+    </tbody>
+</table>
+{{ end }}
+{{ end }}

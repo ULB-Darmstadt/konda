@@ -1,0 +1,212 @@
+{{ define "meta" }}
+{{ end }}
+
+{{ define "styles" }}{{ end }}
+
+{{ define "scripts" }}
+{{ end }}
+
+{{ define "tool" }}
+<div class="container mx-auto p-4 pb-32">
+
+    <!-- Help Section -->
+    <div class="relative" x-data="helpToggle()" x-init="init()">
+        <div x-show="helpOpen" x-transition x-cloak class="mb-4">
+            <div class="card bg-base-100 text-base-content shadow-xl">
+                <div class="card-body">
+                    <div class="flex justify-between items-start">
+                        <h2 class="card-title">Help: Provide Research Context and Upload Your Data</h2>
+                        <button @click="toggleHelpOpen()" class="btn btn-sm btn-circle">
+                            ✕
+                        </button>
+                    </div>
+                    <div class="leading-relaxed space-y-2">
+                        <p>
+                            In this screen, you're asked to upload the core materials related to your research. This
+                            includes your dataset (as a ZIP file), and any contextual documents that help explain
+                            it - such as research papers, abstracts, README files, or metadata.
+                        </p>
+                        <p>
+                            You'll also be asked to specify the domain of your research. You can either select from the
+                            provided list or describe it freely in your own words. Additionally, there is a space to
+                            enter any extra information that may not be captured in your files - details that you
+                            consider
+                            important for understanding your dataset or its background.
+                        </p>
+                        <p>
+                            The goal of this step is to give the system as much context as possible. This information
+                            will be used in later stages to identify relevant concepts, extract entities and
+                            relationships, and build a meaningful knowledge graph.
+                        </p>
+                        <p>
+                            <em>The more detail you provide here, the more accurate and useful the resulting graph will
+                                be.</em>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button @click="toggleHelpOpen()"
+                class="btn btn-info btn-circle btn-lg fixed bottom-20 right-6 z-50 shadow-lg tooltip tooltip-left"
+                data-tip="Need help?">
+            <span class="text-sm">Help</span>
+        </button>
+    </div>
+
+    <div id="running-tasks"
+         hx-get="/tool/running-tasks"
+         hx-trigger="load, every 5s"
+         hx-swap="innerHTML">
+        <!-- Task Card populated by server -->
+    </div>
+
+    <div>
+        <form id="upload-dataset-form"
+              hx-post="/tool/upload-dataset"
+              hx-encoding="multipart/form-data"
+              hx-swap="none"
+              hx-indicator="#upload-spinner">
+
+            <div class="card bg-base-100 shadow-xl mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Upload Dataset</h2>
+
+                    <fieldset class="fieldset my-2">
+                        <legend class="fieldset-legend">Dataset as a Zip File</legend>
+                        <span class="italic text-sm text-neutral-content">Currently the max upload size is: 500
+                            MB</span>
+                        <input type="file" class="file-input w-full" name="dataset" accept=".zip" />
+                    </fieldset>
+
+                    <fieldset class="fieldset"
+                              id="selected-items-container-dataset"
+                              hx-get="/tool/upload-dataset/uploaded-dataset-files"
+                              hx-trigger="load"
+                              hx-swap="innerHTML"
+                              hx-target="this">
+                        <!-- List is filled dynamically -->
+                    </fieldset>
+
+                    <fieldset class="fieldset my-2">
+                        <legend class="fieldset-legend">Paper, Abstracts, and Other Context Files</legend>
+                        <input type="file" class="file-input w-full" name="context_files" multiple
+                               accept=".pdf,.doc,.docx,.txt,.odt,.md,.pptx,.odp" />
+                    </fieldset>
+
+                    <fieldset class="fieldset"
+                              id="selected-items-container-context"
+                              hx-get="/tool/upload-dataset/uploaded-context-files"
+                              hx-trigger="load"
+                              hx-swap="innerHTML"
+                              hx-target="this">
+                        <!-- List is filled dynamically -->
+                    </fieldset>
+
+                    <fieldset class="fieldset mb-4 hidden">
+                        <progress id="upload-dataset-progress" class="progress w-full" value="0" max="100"></progress>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div class="card bg-base-100 shadow-xl mb-4">
+                <div class="card-body mb-4">
+                    <h2 class="card-title">Further Context</h2>
+
+                    <fieldset class="fieldset my-2"
+                              x-data="{ query: '{{ .Domain }}', isFocused: false }"
+                              @focusin="isFocused = true"
+                              @click.away="setTimeout(() => isFocused = false, 100)">
+                        <legend class="fieldset-legend">Search for Domains</legend>
+                        <div class="relative">
+                            <input
+                                   id="domain-search"
+                                   type="text"
+                                   name="domain-search"
+                                   autocomplete="off"
+                                   class="input w-full pr-10"
+                                   placeholder="Type to search, or add your own..."
+                                   x-model="query"
+                                   @keydown.enter.prevent
+                                   hx-trigger="input changed delay:300ms, load"
+                                   hx-get="/tool/upload-dataset/domains"
+                                   hx-target="#search-results"
+                                   hx-swap="innerHTML show:#upload-input:top" />
+                            <button
+                                    type="button"
+                                    class="absolute inset-y-0 right-0 flex items-center px-3"
+                                    x-show="query"
+                                    @click.stop="() => {
+                                        isFocused = false;
+                                        query = '';
+                                        const inputElement = document.getElementById('domain-search');
+                                        inputElement.value = '';
+                                        inputElement.dispatchEvent(new Event('input'));
+                                    }">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content"
+                                     viewBox="0 0 24 24" fill="none">
+                                    <path d="M12.0004 9.5L17.0004 14.5M17.0004 9.5L12.0004 14.5M4.50823 13.9546L7.43966 17.7546C7.79218 18.2115 7.96843 18.44 8.18975 18.6047C8.38579 18.7505 8.6069 18.8592 8.84212 18.9253C9.10766 19 9.39623 19 9.97336 19H17.8004C18.9205 19 19.4806 19 19.9084 18.782C20.2847 18.5903 20.5907 18.2843 20.7824 17.908C21.0004 17.4802 21.0004 16.9201 21.0004 15.8V8.2C21.0004 7.0799 21.0004 6.51984 20.7824 6.09202C20.5907 5.71569 20.2847 5.40973 19.9084 5.21799C19.4806 5 18.9205 5 17.8004 5H9.97336C9.39623 5 9.10766 5 8.84212 5.07467C8.6069 5.14081 8.38579 5.2495 8.18975 5.39534C7.96843 5.55998 7.79218 5.78846 7.43966 6.24543L4.50823 10.0454C3.96863 10.7449 3.69883 11.0947 3.59505 11.4804C3.50347 11.8207 3.50347 12.1793 3.59505 12.5196C3.69883 12.9053 3.96863 13.2551 4.50823 13.9546Z"
+                                          stroke="currentColor" stroke-width="1" stroke-linecap="round"
+                                          stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="search-results" x-show="isFocused" x-transition></div>
+                    </fieldset>
+
+                    <fieldset class="fieldset mt-4">
+                        <legend class="fieldset-legend">Additional Remarks</legend>
+                        <textarea name="remarks"
+                                  class="textarea h-full w-full min-h-64"
+                                  placeholder="Enter your additional information about your research and dataset here...">
+                            {{- .Remarks -}}
+                        </textarea>
+                    </fieldset>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Always Visible Bottom Buttons -->
+    <div class="fixed bottom-0 left-0 w-full bg-base-100 inset-shadow-sm pb-2 pt-3 px-4 z-50">
+        <div class="container mx-auto flex justify-between items-center px-10">
+
+            <!-- Left -->
+            <div class="flex items-center">
+            </div>
+
+            <!-- Center -->
+            <div class="flex justify-center items-center gap-4">
+                <!-- You can place additional buttons here later -->
+            </div>
+
+            <!-- Right -->
+            <div class="flex justify-end items-center">
+                <button
+                        type="submit"
+                        form="upload-dataset-form"
+                        class="relative btn btn-primary w-30 text-center">
+                    <div id="upload-spinner" class="htmx-indicator">
+                        <svg class="animate-spin h-2 w-2"
+                             fill="currentColor" viewBox="0 0 32 32"
+                             xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.28">
+                            <path
+                                  d="M16 0.75c-0.69 0-1.25 0.56-1.25 1.25s0.56 1.25 1.25 1.25v0c7.042 0.001 12.75 5.71 12.75 12.751 0 3.521-1.427 6.709-3.734 9.016v0c-0.226 0.226-0.365 0.538-0.365 0.883 0 0.69 0.56 1.25 1.25 1.25 0.346 0 0.659-0.14 0.885-0.367l0-0c2.759-2.76 4.465-6.572 4.465-10.782 0-8.423-6.828-15.251-15.25-15.251h-0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <span class="block w-full text-center">Submit</span>
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 5L14.15 10C14.4237 10.2563 14.6419 10.5659 14.791 10.9099C14.9402 11.2539 15.0171 11.625 15.0171 12C15.0171 12.375 14.9402 12.7458 14.791 13.0898C14.6419 13.4339 14.4237 13.7437 14.15 14L9 19"
+                              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+{{ end }}

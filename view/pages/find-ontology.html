@@ -1,0 +1,290 @@
+{{ define "meta" }}{{ end }}
+
+{{ define "styles" }}{{ end }}
+
+{{ define "scripts" }}{{ end }}
+
+{{ define "tool" }}
+<div class="container mx-auto p-4 pb-32"
+     x-data="{ generateNew: {{ .FromScratch }} }">
+
+    <!-- Help Section -->
+    <div class="relative" x-data="helpToggle()" x-init="init()">
+        <div x-show="helpOpen" x-transition x-cloak class="mb-4">
+            <div class="card bg-base-100 text-base-content shadow-xl">
+                <div class="card-body">
+                    <div class="flex justify-between items-start">
+                        <h2 class="card-title">Help: Add Vocabulary for Your Research</h2>
+                        <button @click="toggleHelpOpen()" class="btn btn-sm btn-circle">
+                            ✕
+                        </button>
+                    </div>
+                    <div class="leading-relaxed space-y-2">
+
+                        <p>
+                            In this step, you'll help the system understand the language and concepts used in your
+                            research by selecting vocabularies - called ontologies - that describe your topic.
+                        </p>
+                        <p>
+                            First, you can enter a prefix and namespace for your graph. These are used in the background
+                            when your knowledge graph is created. If you're not sure what to enter here, feel free to
+                            leave them blank - the app will use default values.
+                        </p>
+
+                        <p>
+                            Next, choose how the app should understand the terms in your research:
+                        </p>
+
+                        <ul class="list-disc list-inside pl-4 space-y-1">
+                            <li>You can stick with the general-purpose vocabularies (called "base ontologies") that are
+                                already included. These cover common and domain agnostic concepts related to research
+                                and data.</li>
+                            <li>Or, if your research uses more specific terminology, you can add more specialized
+                                vocabularies.</li>
+                        </ul>
+
+
+                        <p>
+                            To add specific vocabularies:
+                        </p>
+                        <ul class="list-disc list-inside pl-4 space-y-1">
+                            <li>
+                                You can upload ontology files if you already have them.
+                            </li>
+                            <li>
+                                Or, you can search for terms that appear in your research using the search box. When you
+                                select a term from the results, the entire vocabulary (ontology) that contains that term
+                                will be added. This is by design - because that vocabulary likely includes many related
+                                terms that can help describe other important aspects of your research, even if they
+                                weren't part of your original search.
+                            </li>
+                        </ul>
+                        <p>
+                            You can search for as many terms as you like and add multiple vocabularies. You can also
+                            remove any you no longer need.
+                            <br>
+                            <em>Just keep in mind that the more vocabularies you add - especially large ones - the
+                                longer the next step may take, since the app needs to process them for later
+                                analysis.</em>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button @click="toggleHelpOpen()"
+                class="btn btn-info btn-circle btn-lg fixed bottom-20 right-6 z-50 shadow-lg tooltip tooltip-left"
+                data-tip="Need help?">
+            <span class="text-sm">Help</span>
+        </button>
+    </div>
+
+    <div id="running-tasks"
+         hx-get="/tool/running-tasks"
+         hx-trigger="load, every 5s"
+         hx-swap="innerHTML">
+        <!-- Task Card populated by server -->
+    </div>
+
+    <div>
+        <form
+              id="find-ontology-form"
+              hx-post="/tool/find-ontology"
+              hx-encoding="multipart/form-data"
+              hx-swap="innerHTML"
+              hx-indicator="#form-spinner">
+            <div class="card bg-base-100 shadow-xl mb-4">
+                <div class="card-body mb-4">
+                    <h2 class="card-title">Knowledge Graph Settings</h2>
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend">Only use common base ontologies</legend>
+                        <input
+                               id="generate-toggle"
+                               class="toggle"
+                               name="fromScratch"
+                               type="checkbox"
+                               x-model="generateNew" />
+                    </fieldset>
+
+                    <fieldset class="fieldset">
+                        <legend class="fieldset-legend">Number of Entities and Relations to Extract</legend>
+                        <input
+                               id="extraction-count"
+                               name="extractionCount"
+                               value="{{ if not (or (eq .ExtractionCount 0) (eq .ExtractionCount 15)) }}{{ .ExtractionCount }}{{ end }}"
+                               type="number"
+                               min="5"
+                               max="25"
+                               placeholder="Set extraction count (default 15)"
+                               class="input input-bordered w-full max-w-60 validator" />
+                        <div class="validator-hint hidden">Please enter a number between 5 and 25 or leave empty for
+                            default (15 entities).</div>
+                    </fieldset>
+
+                    <fieldset id="namespace" class="fieldset">
+                        <legend class="fieldset-legend">Enter your prefix and namespace</legend>
+
+                        <div class="flex flex-row gap-4">
+                            <input type="text"
+                                   name="prefix"
+                                   value="{{ .Prefix }}"
+                                   placeholder="Prefix (e.g., ex)"
+                                   @keydown.enter.prevent
+                                   class="input input-bordered w-full max-w-60" />
+
+                            <input type="url"
+                                   name="namespace"
+                                   value="{{.Namespace}}"
+                                   @keydown.enter.prevent
+                                   placeholder="... or leave blank to use the default: http://example.org/ontology#"
+                                   class="input input-bordered w-11/12" />
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            <div x-show="!generateNew" x-transition>
+                <div class="card bg-base-100 shadow-xl mb-4">
+                    <div id="myCard" class="card-body mb-4">
+                        <h2 class="card-title">Find or Upload Ontologies</h2>
+
+                        <!-- File Upload -->
+                        <fieldset id="upload-input" class="fieldset">
+                            <legend class="fieldset-legend">Upload Ontology File</legend>
+                            <input
+                                   type="file"
+                                   name="ontology-file"
+                                   multiple
+                                   accept=".owl,.xml,.ttl"
+                                   class="file-input w-full join-item" />
+                        </fieldset>
+
+                        <!-- Search -->
+                        <fieldset class="fieldset"
+                                  x-data="{ query: '', isFocused: false }"
+                                  @focusin="isFocused = true"
+                                  @click.away="setTimeout(() => isFocused = false, 100)">
+                            <legend class="fieldset-legend">Search for Ontologies</legend>
+                            <div class="relative">
+                                <input
+                                       id="ontology-search"
+                                       type="text"
+                                       name="ontology-search"
+                                       autocomplete="off"
+                                       class="input w-full pr-10"
+                                       placeholder="Type to search..."
+                                       x-ref="ontologySearchInput"
+                                       x-model="query"
+                                       @keydown.enter.prevent
+                                       hx-trigger="input changed delay:300ms"
+                                       hx-post="/tool/find-ontology/search-ontology"
+                                       hx-target="#search-results"
+                                       hx-indicator="#ontology-search-spinner"
+                                       hx-swap="innerHTML show:#upload-input:top" />
+                                <div class="absolute inset-y-0 right-0 flex items-center space-x-2 px-3">
+                                    <div id="ontology-search-spinner"
+                                         class="htmx-indicator">
+                                        <svg class="animate-spin h-4 w-4 text-base-content/60"
+                                             fill="currentColor" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"
+                                             stroke="currentColor" stroke-width="1.28">
+                                            <path
+                                                  d="M16 0.75c-0.69 0-1.25 0.56-1.25 1.25s0.56 1.25 1.25 1.25v0c7.042 0.001 12.75 5.71 12.75 12.751 0 3.521-1.427 6.709-3.734 9.016v0c-0.226 0.226-0.365 0.538-0.365 0.883 0 0.69 0.56 1.25 1.25 1.25 0.346 0 0.659-0.14 0.885-0.367l0-0c2.759-2.76 4.465-6.572 4.465-10.782 0-8.423-6.828-15.251-15.25-15.251h-0z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <button
+                                            type="button"
+                                            x-show="query"
+                                            @click.stop="() => {
+                                            isFocused = false;
+                                            query = '';
+                                            const inputElement = document.getElementById('ontology-search');
+                                            inputElement.value = '';
+                                            inputElement.dispatchEvent(new Event('input'));
+                                        }">
+                                        <svg class="h-6 w-6 text-base-content/60" xmlns="http://www.w3.org/2000/svg"
+                                             fill="none">
+                                            <path d="M12.0004 9.5L17.0004 14.5M17.0004 9.5L12.0004 14.5M4.50823 13.9546L7.43966 17.7546C7.79218 18.2115 7.96843 18.44 8.18975 18.6047C8.38579 18.7505 8.6069 18.8592 8.84212 18.9253C9.10766 19 9.39623 19 9.97336 19H17.8004C18.9205 19 19.4806 19 19.9084 18.782C20.2847 18.5903 20.5907 18.2843 20.7824 17.908C21.0004 17.4802 21.0004 16.9201 21.0004 15.8V8.2C21.0004 7.0799 21.0004 6.51984 20.7824 6.09202C20.5907 5.71569 20.2847 5.40973 19.9084 5.21799C19.4806 5 18.9205 5 17.8004 5H9.97336C9.39623 5 9.10766 5 8.84212 5.07467C8.6069 5.14081 8.38579 5.2495 8.18975 5.39534C7.96843 5.55998 7.79218 5.78846 7.43966 6.24543L4.50823 10.0454C3.96863 10.7449 3.69883 11.0947 3.59505 11.4804C3.50347 11.8207 3.50347 12.1793 3.59505 12.5196C3.69883 12.9053 3.96863 13.2551 4.50823 13.9546Z"
+                                                  stroke="currentColor"
+                                                  stroke-width="1"
+                                                  stroke-linecap="round"
+                                                  stroke-linejoin="round" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="search-results"
+                                 x-show="isFocused"
+                                 x-transition>
+                                <!-- Populated dynamically -->
+                            </div>
+                        </fieldset>
+
+                        <!-- Selected Ontologies -->
+                        <fieldset class="fieldset"
+                                  id="selected-items-container-ontologies"
+                                  hx-get="/tool/find-ontology/selected-ontologies"
+                                  hx-trigger="load"
+                                  hx-swap="innerHTML"
+                                  hx-target="this">
+                            <!-- Content added dynamically -->
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Always Visible Bottom Buttons -->
+    <div class="fixed bottom-0 left-0 w-full bg-base-100 inset-shadow-sm pb-2 pt-3 px-4 z-50">
+        <div class="container mx-auto flex justify-between items-center px-10">
+
+            <!-- Left -->
+            <div class="flex items-center">
+                <button class="btn w-28" type="button"
+                        onclick="window.location.href='/tool/upload-dataset';">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14.9991 19L9.83911 14C9.56672 13.7429 9.34974 13.433 9.20142 13.0891C9.0531 12.7452 8.97656 12.3745 8.97656 12C8.97656 11.6255 9.0531 11.2548 9.20142 10.9109C9.34974 10.567 9.56672 10.2571 9.83911 10L14.9991 5"
+                              stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                        </path>
+                    </svg>
+                    <span class="block w-full text-center">Back</span>
+                </button>
+            </div>
+
+            <!-- Center -->
+            <div class="flex justify-center items-center gap-4">
+                <!-- You can place additional buttons here later -->
+            </div>
+
+            <!-- Right -->
+            <div class="flex justify-end items-center">
+                <button
+                        type="submit"
+                        form="find-ontology-form"
+                        class="relative btn btn-primary w-30 text-center">
+                    <div id="form-spinner" class="htmx-indicator">
+                        <svg class="animate-spin h-2 w-2"
+                             fill="currentColor" viewBox="0 0 32 32"
+                             xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.28">
+                            <path
+                                  d="M16 0.75c-0.69 0-1.25 0.56-1.25 1.25s0.56 1.25 1.25 1.25v0c7.042 0.001 12.75 5.71 12.75 12.751 0 3.521-1.427 6.709-3.734 9.016v0c-0.226 0.226-0.365 0.538-0.365 0.883 0 0.69 0.56 1.25 1.25 1.25 0.346 0 0.659-0.14 0.885-0.367l0-0c2.759-2.76 4.465-6.572 4.465-10.782 0-8.423-6.828-15.251-15.25-15.251h-0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <span class="block w-full text-center">Submit</span>
+                    <svg class="w-6 h-6" stroke="currentColor" viewBox="0 0 24 24" fill="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 5L14.15 10C14.4237 10.2563 14.6419 10.5659 14.791 10.9099C14.9402 11.2539 15.0171 11.625 15.0171 12C15.0171 12.375 14.9402 12.7458 14.791 13.0898C14.6419 13.4339 14.4237 13.7437 14.15 14L9 19"
+                              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+{{ end }}

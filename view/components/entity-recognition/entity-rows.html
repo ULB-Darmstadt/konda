@@ -1,0 +1,78 @@
+{{ define "entity-rows" }}
+
+{{ range $index, $entity := . }}
+<tr id="entity-{{ $index }}">
+    <td>
+        <input
+               id="entity-input-name-{{ $index }}"
+               type="text"
+               name="entity-name-{{ $index }}"
+               placeholder="Enter entity name"
+               class="input input-sm w-full text-sm"
+               value="{{ $entity.Entity }}"
+               @keydown.enter.prevent
+               hx-trigger="blur delay:200ms"
+               hx-put="/tool/entity-recognition/entities/{{ $index }}"
+               hx-target="#entity-table-body"
+               hx-swap="none" />
+    </td>
+    <td class="pr-0">
+        <div x-data="{
+                selectedValue: '{{ if .Type }}{{ .Type }}{{ else }}{{if .SuggestedTypes }}{{ index .SuggestedTypes 0 }}{{ else }}{{ end }}{{ end }}',
+                showDropdown: false 
+            }"
+             class="relative">
+            <!-- Input Field -->
+            <input type="text"
+                   x-model="selectedValue"
+                   name="entity-type-{{ $index }}"
+                   placeholder="Select or enter..."
+                   autocomplete="off"
+                   class="input input-sm w-full text-sm"
+                   x-ref="inputField"
+                   @focus="showDropdown = true"
+                   @input="showDropdown = false"
+                   @click.away="showDropdown = false"
+                   @keydown.enter.prevent
+                   hx-trigger="blur delay:200ms"
+                   hx-put="/tool/entity-recognition/entities/{{ $index }}"
+                   hx-target="#entity-table-body"
+                   hx-swap="none" />
+            <!-- Button -->
+            <div
+                 class="absolute text-xs right-3 top-1/2 transform -translate-y-1/2 hover:bg-base-200 pointer-events-none">
+                ▼
+            </div>
+            <!-- Dropdown Options -->
+            <ul x-show="showDropdown"
+                class="absolute mt-1 w-full bg-base-100 border border-base-300 rounded-lg shadow-md z-10">
+                {{ range $index, $option := .SuggestedTypes }}
+                <li class="p-2 hover:bg-base-200 cursor-pointer"
+                    @click="selectedValue = '{{ $option }}'; showDropdown = false">
+                    {{ $option }}
+                </li>
+                {{ end }}
+                <li class="p-2 text-base-content/60 italic hover:bg-base-200 cursor-pointer"
+                    @mousedown.prevent
+                    @click="selectedValue = ''; $nextTick(() => $refs.inputField.focus()); showDropdown = false">
+                    Enter your own text...
+                </li>
+            </ul>
+        </div>
+    </td>
+    <td class="w-10 text-center px-2">
+        <button class="btn btn-ghost btn-sm text-base-content/60 hover:text-error"
+                type="button"
+                hx-delete="/tool/entity-recognition/entities/{{ $index }}"
+                hx-target="#entity-table-body"
+                hx-swap="innerHTML swap:100ms">
+            <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </td>
+</tr>
+{{ end }}
+{{ end }}

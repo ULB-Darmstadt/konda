@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+message: If you use this software, please cite both the article from preferred-citation and the software itself.
+
+title: KONDA
+
+abstract: >
+  KONDA is a web-based application designed to assist researchers in managing research data effectively.
+  It leverages AI to extract metadata from datasets and papers, transforming them into structured
+  knowledge representations like ontologies and knowledge graphs.
+
+authors:
+  - family-names: Görz
+    given-names: Martin
+  - name: Data Stream Management and Analysis Group (RWTH Aachen University)
+
+version: 1.0.0
+date-released: # TODO (set on public release)
+
+license: GPL-3.0-only
+
+repository-code: # TODO (set on public release)
+
+preferred-citation:
+  type: conference-paper
+  title: "KONDA: An LLM-based Tool for Semantic Annotation and Knowledge Graph Creation Using Ontologies for Research Data"
+  conference: "5th International Workshop on Scientific Knowledge: Representation, Discovery, and Assessment (Sci-K)"
+  authors:
+    - family-names: Kim
+      given-names: Soo-Yon
+      orcid: "https://orcid.org/0000-0001-5975-0031"
+    - family-names: Görz
+      given-names: Martin
+      orcid: "https://orcid.org/0009-0009-6087-0183"
+    - family-names: Geisler
+      given-names: Sandra
+      orcid: "https://orcid.org/0000-0002-8970-6282"
+  month: 11
+  year: 2025
+  location:
+    name: Nara, Japan

@@ -1,0 +1,32 @@
+{{ define "error-box" }}
+{{ if . }}
+<div id="error-box" hx-swap-oob="true" class="sticky top-0 z-50">
+    <div id="error-content" role="alert" class="alert alert-error alert-soft">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>{{ . }}</span>
+        <button class="btn btn-ghost btn-sm text-base-content/60 hover:text-error px-1"
+                onclick="this.closest('#error-content').remove()">
+            <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+    <script>
+        // Clear existing timeout if present
+        if (window._errorBoxTimer) {
+            clearTimeout(window._errorBoxTimer);
+        }
+        // Set a new one
+        window._errorBoxTimer = setTimeout(() => {
+            const el = document.getElementById("error-content");
+            if (el) el.remove();
+        }, 10000);
+    </script>
+</div>
+{{ end }}
+{{ end }}

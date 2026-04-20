@@ -1,0 +1,29 @@
+{{ define "step-progress" }}
+<div id="steps-progress" class="flex justify-center my-6">
+    <ul class="steps">
+        {{ $currentStep := .Step }}
+
+        {{ template "step" (args 1 "Upload Dataset" "/tool/upload-dataset" $currentStep) }}
+        {{ template "step" (args 2 "Find Ontology" "/tool/find-ontology" $currentStep) }}
+        {{ template "step" (args 3 "Entity Recognition" "/tool/entity-recognition" $currentStep) }}
+        {{ template "step" (args 4 "Relation Extraction" "/tool/relation-extraction" $currentStep) }}
+        {{ template "step" (args 5 "Ontology Annotation" "/tool/ontology-mapping" $currentStep) }}
+        {{ template "step" (args 6 "Knowledge Graph Export" "/tool/knowledge-graph" $currentStep) }}
+    </ul>
+</div>
+{{ end }}
+
+{{ define "step" }}
+{{ $stepNum := index . 0 }}
+{{ $stepTitle := index . 1 }}
+{{ $stepURL := index . 2 }}
+{{ $currentStep := index . 3 }}
+
+<li class="step {{ if le $stepNum $currentStep }}step-primary{{ end }}">
+    {{ if le $stepNum $currentStep }}
+    <a href="{{ $stepURL }}">{{ $stepTitle }}</a>
+    {{ else }}
+    {{ $stepTitle }}
+    {{ end }}
+</li>
+{{ end }}

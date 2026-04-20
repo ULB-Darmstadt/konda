@@ -1,0 +1,333 @@
+# Third-party library license audit for GPLv3 publication (KONDA)
+
+This report lists third-party dependencies used by KONDA, their licenses as verified from license files or official sources.
+
+**Verification method:** The npm tool `license-checker` is used to generate an automated inventory of all runtime and transitive dependencies in the Node.js component. The tool scans the installed dependency tree in `node_modules` and extracts declared license information from each package’s metadata and license files. The output was then manually reviewed to verify unknown or non-standard licenses and to assess GPLv3 compatibility.
+
+All Go modules were resolved with `go list -m all`. Licenses were taken from the [deps.dev](https://deps.dev) which reflects the module’s LICENSE file. All listed Go dependencies use licenses that are GPLv3-compatible (MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC).
+
+**Important:** Earlier internal builds used the Neo4j Visualization Library (`@neo4j-nvl/*`), which is under a **proprietary commercial license** that is **not compatible** with redistributing that library under GPLv3. These dependencies have been **removed from this distribution**.
+
+---
+
+## 1. NPM dependencies
+
+| Package | Version | License | GPLv3 compatible? |
+|---------|---------|----------|------------------|
+| @alloc/quick-lru | 5.2.0 | MIT | YES |
+| @babel/code-frame | 7.26.2 | MIT | YES |
+| @babel/helper-validator-identifier | 7.25.9 | MIT | YES |
+| @lezer/common | 1.2.3 | MIT | YES |
+| @lezer/lr | 1.4.2 | MIT | YES |
+| @lmdb/lmdb-win32-x64 | 2.8.5 | MIT | YES |
+| @lukeed/csprng | 1.1.0 | MIT | YES |
+| @lukeed/uuid | 2.0.1 | MIT | YES |
+| @mischnic/json-sourcemap | 0.1.1 | MIT | YES |
+| @msgpackr-extract/msgpackr-extract-win32-x64 | 3.0.3 | MIT | YES |
+| @neo4j-bloom/dagre | 0.8.14 | MIT | YES |
+| @parcel/bundler-default | 2.13.3 | MIT | YES |
+| @parcel/cache | 2.13.3 | MIT | YES |
+| @parcel/codeframe | 2.13.3 | MIT | YES |
+| @parcel/compressor-raw | 2.13.3 | MIT | YES |
+| @parcel/config-default | 2.13.3 | MIT | YES |
+| @parcel/core | 2.13.3 | MIT | YES |
+| @parcel/diagnostic | 2.13.3 | MIT | YES |
+| @parcel/events | 2.13.3 | MIT | YES |
+| @parcel/feature-flags | 2.13.3 | MIT | YES |
+| @parcel/fs | 2.13.3 | MIT | YES |
+| @parcel/graph | 3.3.3 | MIT | YES |
+| @parcel/logger | 2.13.3 | MIT | YES |
+| @parcel/markdown-ansi | 2.13.3 | MIT | YES |
+| @parcel/namer-default | 2.13.3 | MIT | YES |
+| @parcel/node-resolver-core | 3.4.3 | MIT | YES |
+| @parcel/optimizer-css | 2.13.3 | MIT | YES |
+| @parcel/optimizer-htmlnano | 2.13.3 | MIT | YES |
+| @parcel/optimizer-image | 2.13.3 | MIT | YES |
+| @parcel/optimizer-svgo | 2.13.3 | MIT | YES |
+| @parcel/optimizer-swc | 2.13.3 | MIT | YES |
+| @parcel/package-manager | 2.13.3 | MIT | YES |
+| @parcel/packager-css | 2.13.3 | MIT | YES |
+| @parcel/packager-html | 2.13.3 | MIT | YES |
+| @parcel/packager-js | 2.13.3 | MIT | YES |
+| @parcel/packager-raw | 2.13.3 | MIT | YES |
+| @parcel/packager-svg | 2.13.3 | MIT | YES |
+| @parcel/packager-wasm | 2.13.3 | MIT | YES |
+| @parcel/plugin | 2.13.3 | MIT | YES |
+| @parcel/profiler | 2.13.3 | MIT | YES |
+| @parcel/reporter-cli | 2.13.3 | MIT | YES |
+| @parcel/reporter-dev-server | 2.13.3 | MIT | YES |
+| @parcel/reporter-tracer | 2.13.3 | MIT | YES |
+| @parcel/resolver-default | 2.13.3 | MIT | YES |
+| @parcel/runtime-browser-hmr | 2.13.3 | MIT | YES |
+| @parcel/runtime-js | 2.13.3 | MIT | YES |
+| @parcel/runtime-react-refresh | 2.13.3 | MIT | YES |
+| @parcel/runtime-service-worker | 2.13.3 | MIT | YES |
+| @parcel/rust | 2.13.3 | MIT | YES |
+| @parcel/source-map | 2.1.1 | MIT | YES |
+| @parcel/transformer-babel | 2.13.3 | MIT | YES |
+| @parcel/transformer-css | 2.13.3 | MIT | YES |
+| @parcel/transformer-html | 2.13.3 | MIT | YES |
+| @parcel/transformer-image | 2.13.3 | MIT | YES |
+| @parcel/transformer-js | 2.13.3 | MIT | YES |
+| @parcel/transformer-json | 2.13.3 | MIT | YES |
+| @parcel/transformer-postcss | 2.13.3 | MIT | YES |
+| @parcel/transformer-posthtml | 2.13.3 | MIT | YES |
+| @parcel/transformer-raw | 2.13.3 | MIT | YES |
+| @parcel/transformer-react-refresh-wrap | 2.13.3 | MIT | YES |
+| @parcel/transformer-sass | 2.13.3 | MIT | YES |
+| @parcel/transformer-svg | 2.13.3 | MIT | YES |
+| @parcel/types | 2.13.3 | MIT | YES |
+| @parcel/types-internal | 2.13.3 | MIT | YES |
+| @parcel/utils | 2.13.3 | MIT | YES |
+| @parcel/watcher | 2.5.1 | MIT | YES |
+| @parcel/watcher-win32-x64 | 2.5.1 | MIT | YES |
+| @parcel/workers | 2.13.3 | MIT | YES |
+| @segment/analytics-core | 1.8.1 | MIT | YES |
+| @segment/analytics-generic-utils | 1.2.0 | MIT | YES |
+| @segment/analytics-next | 1.78.1 | MIT | YES |
+| @segment/analytics.js-video-plugins | 0.2.1 | ISC | YES |
+| @segment/facade | 3.4.10 | MIT* | YES |
+| @segment/isodate | 1.0.3 | MIT* | YES |
+| @segment/isodate-traverse | 1.1.1 | MIT* | YES |
+| @swc/core | 1.11.5 | Apache-2.0 | YES |
+| @swc/core-win32-x64-msvc | 1.11.5 | Apache-2.0 AND MIT | YES |
+| @swc/counter | 0.1.3 | Apache-2.0 | YES |
+| @swc/helpers | 0.5.15 | Apache-2.0 | YES |
+| @swc/types | 0.1.19 | Apache-2.0 | YES |
+| @tailwindcss/forms | 0.5.10 | MIT | YES |
+| @tailwindcss/node | 4.0.9 | MIT | YES |
+| @tailwindcss/oxide | 4.0.9 | MIT | YES |
+| @tailwindcss/oxide-win32-x64-msvc | 4.0.9 | MIT | YES |
+| @tailwindcss/postcss | 4.0.9 | MIT | YES |
+| @tailwindcss/typography | 0.5.16 | MIT | YES |
+| @vue/reactivity | 3.1.5 | MIT | YES |
+| @vue/shared | 3.1.5 | MIT | YES |
+| alpinejs | 3.14.8 | MIT | YES |
+| ansi-styles | 4.3.0 | MIT | YES |
+| argparse | 2.0.1 | Python-2.0 | YES |
+| autoprefixer | 10.4.20 | MIT | YES |
+| base-x | 3.0.10 | MIT | YES |
+| base64-js | 1.5.1 | MIT | YES |
+| bin-pack | 1.0.2 | MIT | YES |
+| braces | 3.0.3 | MIT | YES |
+| browserslist | 4.24.4 | MIT | YES |
+| buffer | 6.0.3 | MIT | YES |
+| callsites | 3.1.0 | MIT | YES |
+| caniuse-lite | 1.0.30001701 | CC-BY-4.0 | YES |
+| chalk | 4.1.2 | MIT | YES |
+| chokidar | 4.0.3 | MIT | YES |
+| chrome-trace-event | 1.0.4 | MIT | YES |
+| clone | 2.1.2 | MIT | YES |
+| color-convert | 2.0.1 | MIT | YES |
+| color-name | 1.1.4 | MIT | YES |
+| color-string | 1.9.1 | MIT | YES |
+| commander | 12.1.0 | MIT | YES |
+| concaveman | 1.2.1 | ISC | YES |
+| core-util-is | 1.0.3 | MIT | YES |
+| cose-base | 1.0.3 | MIT | YES |
+| cosmiconfig | 9.0.0 | MIT | YES |
+| cssesc | 3.0.0 | MIT | YES |
+| cytoscape | 3.31.1 | MIT | YES |
+| cytoscape-cose-bilkent | 4.1.0 | MIT | YES |
+| d3-dispatch | 3.0.1 | ISC | YES |
+| d3-force | 3.0.0 | ISC | YES |
+| d3-quadtree | 3.0.1 | ISC | YES |
+| d3-timer | 3.0.1 | ISC | YES |
+| daisyui | 5.0.0 | MIT | YES |
+| detect-libc | 1.0.3 | Apache-2.0 | YES |
+| detect-libc | 2.0.3 | Apache-2.0 | YES |
+| dom-serializer | 1.4.1 | MIT | YES |
+| dom-serializer | 2.0.0 | MIT | YES |
+| domelementtype | 2.3.0 | BSD-2-Clause | YES |
+| domhandler | 4.3.1 | BSD-2-Clause | YES |
+| domhandler | 5.0.3 | BSD-2-Clause | YES |
+| domutils | 2.8.0 | BSD-2-Clause | YES |
+| domutils | 3.2.2 | BSD-2-Clause | YES |
+| dotenv | 16.4.7 | BSD-2-Clause | YES |
+| dotenv-expand | 11.0.7 | BSD-2-Clause | YES |
+| dset | 3.1.4 | MIT | YES |
+| electron-to-chromium | 1.5.109 | ISC | YES |
+| enhanced-resolve | 5.18.1 | MIT | YES |
+| entities | 2.2.0 | BSD-2-Clause | YES |
+| entities | 3.0.1 | BSD-2-Clause | YES |
+| entities | 4.5.0 | BSD-2-Clause | YES |
+| env-paths | 2.2.1 | MIT | YES |
+| error-ex | 1.3.2 | MIT | YES |
+| escalade | 3.2.0 | MIT | YES |
+| fill-range | 7.1.1 | MIT | YES |
+| fraction.js | 4.3.7 | MIT | YES |
+| get-port | 4.2.0 | MIT | YES |
+| gl-matrix | 3.4.3 | MIT | YES |
+| globals | 13.24.0 | MIT | YES |
+| glsl-inject-defines | 1.0.3 | MIT | YES |
+| glsl-token-inject-block | 1.1.0 | MIT | YES |
+| glsl-token-string | 1.0.1 | MIT | YES |
+| glsl-tokenizer | 2.1.5 | MIT | YES |
+| graceful-fs | 4.2.11 | ISC | YES |
+| graphlib | 2.1.8 | MIT | YES |
+| has-flag | 4.0.0 | MIT | YES |
+| htmlnano | 2.1.1 | MIT | YES |
+| htmlparser2 | 7.2.0 | MIT | YES |
+| htmlparser2 | 9.1.0 | MIT | YES |
+| htmx.org | 1.9.12 | 0BSD | YES |
+| ieee754 | 1.2.1 | BSD-3-Clause | YES |
+| immutable | 5.0.3 | MIT | YES |
+| import-fresh | 3.3.1 | MIT | YES |
+| inherits | 2.0.4 | ISC | YES |
+| is-arrayish | 0.2.1 | MIT | YES |
+| is-arrayish | 0.3.2 | MIT | YES |
+| is-extglob | 2.1.1 | MIT | YES |
+| is-glob | 4.0.3 | MIT | YES |
+| is-json | 2.0.1 | ISC | YES |
+| is-number | 7.0.0 | MIT | YES |
+| isarray | 0.0.1 | MIT | YES |
+| jiti | 2.4.2 | MIT | YES |
+| js-cookie | 3.0.1 | MIT | YES |
+| js-tokens | 4.0.0 | MIT | YES |
+| js-yaml | 4.1.0 | MIT | YES |
+| json-parse-even-better-errors | 2.3.1 | MIT | YES |
+| json5 | 2.2.3 | MIT | YES |
+| layout-base | 1.0.2 | MIT | YES |
+| lightningcss | 1.29.1 | MPL-2.0 | YES |
+| lightningcss-win32-x64-msvc | 1.29.1 | MPL-2.0 | YES |
+| lines-and-columns | 1.2.4 | MIT | YES |
+| lmdb | 2.8.5 | MIT | YES |
+| lodash | 4.17.21 | MIT | YES |
+| lodash.castarray | 4.4.0 | MIT | YES |
+| lodash.isplainobject | 4.0.6 | MIT | YES |
+| lodash.merge | 4.6.2 | MIT | YES |
+| loglevel | 1.9.2 | MIT | YES |
+| micromatch | 4.0.8 | MIT | YES |
+| mini-svg-data-uri | 1.4.4 | MIT | YES |
+| mobx | 3.6.2 | MIT | YES |
+| msgpackr | 1.11.2 | MIT | YES |
+| msgpackr-extract | 3.0.3 | MIT | YES |
+| nanoid | 3.3.8 | MIT | YES |
+| neo4j-driver | 5.28.1 | Apache-2.0 | YES |
+| neo4j-driver-bolt-connection | 5.28.1 | Apache-2.0 | YES |
+| neo4j-driver-core | 5.28.1 | Apache-2.0 | YES |
+| new-date | 1.0.3 | MIT* | YES |
+| node-addon-api | 6.1.0 | MIT | YES |
+| node-addon-api | 7.1.1 | MIT | YES |
+| node-fetch | 2.7.0 | MIT | YES |
+| node-gyp-build-optional-packages | 5.1.1 | MIT | YES |
+| node-gyp-build-optional-packages | 5.2.2 | MIT | YES |
+| node-pid-controller | 1.0.1 | MIT | YES |
+| node-releases | 2.0.19 | MIT | YES |
+| normalize-range | 0.1.2 | MIT | YES |
+| nullthrows | 1.1.1 | MIT | YES |
+| obj-case | 0.2.1 | MIT | YES |
+| ordered-binary | 1.5.3 | MIT | YES |
+| parcel | 2.13.3 | MIT | YES |
+| parent-module | 1.0.1 | MIT | YES |
+| parse-json | 5.2.0 | MIT | YES |
+| picocolors | 1.1.1 | ISC | YES |
+| picomatch | 2.3.1 | MIT | YES |
+| point-in-polygon | 1.1.0 | MIT | YES |
+| postcss | 8.5.3 | MIT | YES |
+| postcss-selector-parser | 6.0.10 | MIT | YES |
+| postcss-value-parser | 4.2.0 | MIT | YES |
+| posthtml | 0.16.6 | MIT | YES |
+| posthtml-parser | 0.11.0 | MIT | YES |
+| posthtml-parser | 0.12.1 | MIT | YES |
+| posthtml-render | 3.0.0 | MIT | YES |
+| process | 0.11.10 | MIT | YES |
+| quickselect | 2.0.0 | ISC | YES |
+| rbush | 3.0.1 | MIT | YES |
+| konda | 0.0.0 | GNU GPLv3 | Project License |
+| react-error-overlay | 6.0.9 | MIT | YES |
+| react-refresh | 0.14.2 | MIT | YES |
+| readable-stream | 1.0.34 | MIT | YES |
+| readdirp | 4.1.2 | MIT | YES |
+| regenerator-runtime | 0.14.1 | MIT | YES |
+| resizelistener | 1.1.0 | MIT | YES |
+| resolve-from | 4.0.0 | MIT | YES |
+| robust-predicates | 2.0.4 | Unlicense | YES |
+| rxjs | 7.8.2 | Apache-2.0 | YES |
+| safe-buffer | 5.2.1 | MIT | YES |
+| sass | 1.85.1 | MIT | YES |
+| semver | 7.7.1 | ISC | YES |
+| simple-swizzle | 0.2.2 | MIT | YES |
+| source-map-js | 1.2.1 | BSD-3-Clause | YES |
+| srcset | 4.0.0 | MIT | YES |
+| srcset | 5.0.1 | MIT | YES |
+| string_decoder | 0.10.31 | MIT | YES |
+| string_decoder | 1.3.0 | MIT | YES |
+| supports-color | 7.2.0 | MIT | YES |
+| tailwindcss | 4.0.9 | MIT | YES |
+| tapable | 2.2.1 | MIT | YES |
+| term-size | 2.2.1 | MIT | YES |
+| through2 | 0.6.5 | MIT | YES |
+| timsort | 0.3.0 | MIT | YES |
+| tinycolor2 | 1.6.0 | MIT | YES |
+| tinyqueue | 2.0.3 | ISC | YES |
+| to-regex-range | 5.0.1 | MIT | YES |
+| tr46 | 0.0.3 | MIT | YES |
+| tslib | 2.8.1 | 0BSD | YES |
+| type-fest | 0.20.2 | MIT | YES |
+| unfetch | 3.1.2 | MIT | YES |
+| unfetch | 4.2.0 | MIT | YES |
+| update-browserslist-db | 1.1.3 | MIT | YES |
+| util-deprecate | 1.0.2 | MIT | YES |
+| utility-types | 3.11.0 | MIT | YES |
+| uuid | 8.3.2 | MIT | YES |
+| weak-lru-cache | 1.2.2 | MIT | YES |
+| webidl-conversions | 3.0.1 | BSD-2-Clause | YES |
+| whatwg-url | 5.0.0 | MIT | YES |
+| xtend | 4.0.2 | MIT | YES |
+
+---
+
+## 2. Go dependencies
+
+| Module | Version | License (deps.dev) | GPLv3 compatible? |
+|--------|---------|---------------------|----------------------|
+| github.com/Azure/azure-sdk-for-go/sdk/ai/azopenai | v0.7.1 | MIT | YES |
+| github.com/Azure/azure-sdk-for-go/sdk/azcore | v1.14.0 | MIT | YES |
+| github.com/alexedwards/scs/boltstore | v0.0.0-20250212122300-421ef1d8611c | MIT |  YES |
+| github.com/alexedwards/scs/v2 | v2.8.0 | MIT | YES |
+| github.com/gabriel-vasile/mimetype | v1.4.8 | MIT | YES |
+| github.com/google/uuid | v1.6.0 | BSD-3-Clause | YES |
+| github.com/joho/godotenv | v1.5.1 | MIT | YES |
+| github.com/lithammer/fuzzysearch | v1.1.8 | MIT | YES |
+| github.com/neo4j/neo4j-go-driver/v5 | v5.28.0 | Apache-2.0 | YES |
+| github.com/pelletier/go-toml/v2 | v2.2.3 | MIT | YES |
+| github.com/rudolfoborges/pdf2go | v0.1.1 | MIT | YES |
+| github.com/thedatashed/xlsxreader | v1.2.8 | MIT | YES |
+| go.etcd.io/bbolt | v1.4.0 | MIT | YES |
+| golang.org/x/crypto | v0.37.0 | BSD-3-Clause | YES |
+| gopkg.in/yaml.v3 | v3.0.1 | MIT, Apache-2.0 | YES |
+| github.com/Azure/azure-sdk-for-go/sdk/azidentity | v1.7.0 | MIT | YES |
+| github.com/Azure/azure-sdk-for-go/sdk/internal | v1.10.0 | MIT | YES |
+| github.com/AzureAD/microsoft-authentication-library-for-go | v1.2.2 | MIT | YES |
+| github.com/davecgh/go-spew | v1.1.1 | ISC | YES |
+| github.com/golang-jwt/jwt/v5 | v5.2.1 | MIT | YES |
+| github.com/inconshreveable/mousetrap | v1.1.0 | Apache-2.0 | YES |
+| github.com/kr/pretty | v0.3.1 | MIT | YES |
+| github.com/kr/text | v0.2.0 | MIT | YES |
+| github.com/kylelemons/godebug | v1.1.0 | Apache-2.0 | YES |
+| github.com/pkg/browser | v0.0.0-20240102092130-5ac0b6a4141c | BSD-2-Clause | YES |
+| github.com/pmezard/go-difflib | v1.0.0 | BSD-3-Clause | YES |
+| github.com/rogpeppe/go-internal | v1.12.0 | BSD-3-Clause | YES |
+| github.com/spf13/cobra | v1.8.1 | Apache-2.0 | YES |
+| github.com/spf13/pflag | v1.0.6 | BSD-3-Clause | YES |
+| github.com/stretchr/objx | v0.1.0 | MIT | YES |
+| github.com/stretchr/testify | v1.10.0 | MIT | YES |
+| github.com/yuin/goldmark | v1.4.13 | MIT | YES |
+| go.etcd.io/gofail | v0.2.0 | Apache-2.0 | YES |
+| golang.org/x/mod | v0.17.0 | BSD-3-Clause | YES |
+| golang.org/x/net | v0.35.0 | BSD-3-Clause | YES |
+| golang.org/x/sync | v0.13.0 | BSD-3-Clause | YES |
+| golang.org/x/sys | v0.32.0 | BSD-3-Clause | YES |
+| golang.org/x/term | v0.31.0 | BSD-3-Clause | YES |
+| golang.org/x/text | v0.24.0 | BSD-3-Clause | YES |
+| golang.org/x/tools | v0.21.1-0.20240508182429-e35e4ccd0d2d | BSD-3-Clause | YES |
+| golang.org/x/xerrors | v0.0.0-20190717185122-a985d3407aa7 | BSD-3-Clause | YES |
+| gopkg.in/check.v1 | v1.0.0-20201130134442-10cb98267c6c | BSD-2-Clause | YES |
+
+---
+
+## 3. Summary
+
+- **Go:** All Go dependencies have been checked via deps.dev; all use MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, or ISC. **No blocking issues for GPLv3 publication** from the Go side.
+- **NPM:** All NPM dependencies present in this distribution either have a standard permissive license in the lockfile (MIT, ISC, Apache-2.0, BSD) or were verified as MIT from the actual license text. **Compatible with GPLv3** (with normal compliance: preserve notices, offer source). The previously used Neo4j Visualization Library packages (`@neo4j-nvl/*`) have been removed from the codebase for GPLv3 compatibility.

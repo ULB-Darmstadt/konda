@@ -1,0 +1,38 @@
+{{ define "selected-items" }}
+{{ if .Items }}
+<div id="selected-items-{{ .ID }}"
+     class="htmx-swapping:opacity-0 opacity-100 transition-opacity duration-200 mb-4">
+    <legend class="fieldset-legend">Selected {{ .Name }}</legend>
+    {{ if .ProcessingTime }}
+    <span class="italic text-sm text-neutral-content">Current Processing Time: ~ {{ .ProcessingTime }}</span>
+    {{ end }}
+    {{ range $index, $item := .Items }}
+    <div class="border border-base-300 rounded-lg mb-2 px-4 py-1 flex items-center justify-between htmx-swapping:opacity-0 transition-opacity duration-100"
+         id="item-{{ $index }}">
+        <div class="flex flex-col md:flex-row flex-grow overflow-hidden min-w-0">
+            <div class="flex items-center overflow-hidden">
+                <span class="badge {{ .BadgeColor }} mr-2 shrink-0">{{ .Badge }}</span>
+                <p class="font-medium text-base-content truncate">
+                    {{ .Title }}
+                </p>
+            </div>
+            <p class="text-sm text-base-content/60 mt-auto md:ml-4 w-0 flex-grow truncate">
+                {{ .Subtitle }}
+            </p>
+        </div>
+        <button class="btn btn-ghost btn-sm text-base-content/60 hover:text-error ml-4 shrink-0"
+                type="button"
+                hx-delete="{{ $.Endpoint }}/{{ $index }}"
+                hx-target="#selected-items-{{ $.ID }}"
+                hx-swap="outerHTML swap:100ms">
+            <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+    {{ end }}
+</div>
+{{ end }}
+{{ end }}

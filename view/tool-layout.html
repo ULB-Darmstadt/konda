@@ -1,0 +1,46 @@
+{{ block "meta" . }}
+<!-- TODO: add some proper text here when you got the name-->
+<meta name="keywords" content="AI assisted 
+Research Data Management Tool for Knowledge 
+Graph creation.">
+<meta name="description" content="Welcome to 
+the KONDA!">
+{{ end }}
+
+{{ define "content" }}
+<div>
+	<script>
+		function helpToggle() {
+			return {
+				helpOpen: false,
+				init() {
+					const stored = localStorage.getItem('helpOpen');
+					if (stored === null) {
+						this.helpOpen = false;
+						localStorage.setItem('helpOpen', 'false');
+					} else {
+						this.helpOpen = localStorage.getItem('helpOpen') === 'true';
+					}
+				},
+				toggleHelpOpen() {
+					this.helpOpen = !this.helpOpen;
+					localStorage.setItem('helpOpen', this.helpOpen);
+				}
+			}
+		}
+	</script>
+
+
+	<div id="HERE">
+		{{ block "step-progress" . }}{{ end }}
+	</div>
+
+	<div class="sticky top-0 z-50">
+		<div class="container mx-auto p-4 pt-2">
+			<div id="error-box"></div>
+		</div>
+	</div>
+
+	{{ block "tool" . }}{{ end }}
+</div>
+{{ end }}

@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+@plugin "daisyui" {
+  themes: cmyk --default, dim --prefersdark;
+}
+
+[x-cloak] {
+  display: none !important;
+}

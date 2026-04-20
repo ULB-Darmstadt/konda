@@ -1,0 +1,73 @@
+@prefix ex: <http://example.org/ontology#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Ontology Classes
+ex:Dataset a owl:Class ;
+    rdfs:label "Dataset" ;
+    rdfs:subClassOf dcat:Dataset .
+
+ex:ContextFile a owl:Class ;
+    rdfs:label "Context File" ;
+    rdfs:subClassOf prov:Entity, bibo:Document .
+
+ex:Concept a owl:Class ;
+    rdfs:label "Concept" ;
+    rdfs:subClassOf skos:Concept .
+
+ex:Category a owl:Class ;
+    rdfs:label "Category" ;
+    rdfs:subClassOf skos:Concept .
+
+# Object Properties
+ex:hasFile a owl:ObjectProperty ;
+    rdfs:label "hasFile" ;
+    rdfs:domain ex:Dataset ;
+    rdfs:range ex:ContextFile .
+
+ex:hasConcept a owl:ObjectProperty ;
+    rdfs:label "hasConcept" ;
+    rdfs:domain ex:Dataset ;
+    rdfs:range ex:Concept .
+
+ex:isSubcategoryOf a owl:ObjectProperty ;
+    rdfs:label "isSubcategoryOf" ;
+    rdfs:domain ex:Concept ;
+    rdfs:range ex:Category ;
+    rdfs:subPropertyOf skos:broader .
+
+# Datatype Properties
+ex:title a owl:DatatypeProperty ;
+    rdfs:label "title" ;
+    rdfs:domain ex:Dataset ;
+    rdfs:range xsd:string .
+
+ex:description a owl:DatatypeProperty ;
+    rdfs:label "description" ;
+    rdfs:domain ex:Dataset ;
+    rdfs:range xsd:string .
+
+ex:issuedDate a owl:DatatypeProperty ;
+    rdfs:label "issued date" ;
+    rdfs:domain ex:Dataset ;
+    rdfs:range xsd:dateTime .
+
+ex:fileFormat a owl:DatatypeProperty ;
+    rdfs:label "file format" ;
+    rdfs:domain ex:ContextFile ;
+    rdfs:range xsd:string .
+
+ex:fileSize a owl:DatatypeProperty ;
+    rdfs:label "file size" ;
+    rdfs:domain ex:ContextFile ;
+    rdfs:range xsd:decimal .
+
+ex:definition a owl:DatatypeProperty ;
+    rdfs:label "definition" ;
+    rdfs:domain ex:Concept ;
+    rdfs:range xsd:string .

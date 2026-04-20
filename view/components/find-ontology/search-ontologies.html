@@ -1,0 +1,49 @@
+{{ define "search-ontologies" }}
+<div class="border border-base-300 shadow-md rounded-lg mb-2 flex flex-col max-h-96 overflow-y-auto">
+    {{ range $index, $ontology := .}}
+    <form hx-post="/tool/find-ontology/selected-ontologies"
+          hx-trigger="click"
+          hx-target="#selected-items-container-ontologies"
+          hx-swap="innerHTML"
+          class="flex items-center p-6 cursor-pointer rounded-lg hover:bg-base-200">
+        <input type="hidden" name="id" value="{{ $index }}">
+        <div class="flex-shrink-0 mr-6">
+            <p class="text-lg text-base-content/60">{{ plusOne $index }}</p>
+        </div>
+        <div class="flex-1">
+            <p class="font-bold text-base-content" name="ontologyName">{{ $ontology.OntologyName }}</p>
+            <p class="text-sm text-base-content/60" name="term">{{ $ontology.Term }}</p>
+            <p class="text-sm mt-2 text-base-content/80" name="description">{{ $ontology.Description }}</p>
+        </div>
+        <a href="https://terminology.tib.eu/ts/ontologies/{{ $ontology.OntologyName }}" target="_blank"
+           class="badge hover:badge-info p-3"
+           title="For more information about the Ontology click here"
+           hx-on:click="event.stopPropagation();">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-5 h-5">
+                <path d="M12 17.75C12.4142 17.75 12.75 17.4142 12.75 17V11C12.75 10.5858 12.4142 10.25 12 10.25C11.5858 10.25 11.25 10.5858 11.25 11V17C11.25 17.4142 11.5858 17.75 12 17.75Z"
+                      fill="currentColor" />
+                <path d="M12 7C12.5523 7 13 7.44772 13 8C13 8.55228 12.5523 9 12 9C11.4477 9 11 8.55228 11 8C11 7.44772 11.4477 7 12 7Z"
+                      fill="currentColor" />
+                <path fill-rule="evenodd" clip-rule="evenodd"
+                      d="M1.25 12C1.25 6.06294 6.06294 1.25 12 1.25C17.9371 1.25 22.75 6.06294 22.75 12C22.75 17.9371 17.9371 22.75 12 22.75C6.06294 22.75 1.25 17.9371 1.25 12ZM12 2.75C6.89137 2.75 2.75 6.89137 2.75 12C2.75 17.1086 6.89137 21.25 12 21.25C17.1086 21.25 21.25 17.1086 21.25 12C21.25 6.89137 17.1086 2.75 12 2.75Z"
+                      fill="currentColor" />
+            </svg>
+        </a>
+    </form>
+    {{ end }}
+    <a target="_blank" href="https://terminology.tib.eu/ts">
+        <div class="flex items-center px-6 py-4 cursor-pointer rounded-lg hover:bg-base-200">
+            <div class="flex-shrink-0 mr-6">
+                <p class="text-lg text-base-content/60"></p>
+            </div>
+            <div class="flex-1">
+                <p class="font-semibold text-base-content">Did not find what you were looking for?</p>
+                <p class="text-sm mt-2 text-base-content/80">
+                    Upload your own or search for more ontologies at
+                    <span class="underline text-primary">terminology.tib.eu/ts</span>
+                </p>
+            </div>
+        </div>
+    </a>
+</div>
+{{ end }}

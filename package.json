@@ -1,0 +1,28 @@
+{
+  "name": "konda",
+  "version": "0.0.0",
+  "description": "Frontend part of the project.",
+  "license": "UNLICENSED",
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "scripts": {
+    "build": "parcel build ./web/scripts.js ./web/styles.css --dist-dir ./web/static/generated-frontend/",
+    "dev": "parcel build ./web/scripts.js ./web/styles.css --dist-dir ./web/static/generated-frontend/ --no-optimize",
+    "watch": "parcel watch ./web/scripts.js ./web/styles.css --dist-dir ./web/static/generated-frontend/ --no-optimize"
+  },
+  "dependencies": {
+    "@tailwindcss/forms": "latest",
+    "@tailwindcss/typography": "latest",
+    "alpinejs": "latest",
+    "daisyui": "latest",
+    "htmx.org": "latest",
+    "tailwindcss": "latest"
+  },
+  "devDependencies": {
+    "@parcel/transformer-sass": "latest",
+    "@tailwindcss/postcss": "^4.0.9",
+    "autoprefixer": "latest",
+    "parcel": "latest",
+    "postcss": "latest",
+    "process": "^0.11.10"
+  }
+}

@@ -1,0 +1,38 @@
+{{ define "meta" }}
+<!-- TODO: add some proper text here when you got the name-->
+<meta name="keywords" content="AI assisted 
+Research Data Management Tool for Knowledge 
+Graph creation.">
+<meta name="description" content="Welcome to 
+the KONDA!">
+{{ end }}
+
+{{ define "styles" }}{{ end }}
+
+{{ define "scripts" }}{{ end }}
+
+{{ define "content" }}
+<div id="app">
+	<div class="hero bg-base-200 min-h-screen text-base-content">
+		<div class="hero-content flex-col lg:flex-row lg:gap-x-20">
+			<img src="static/images/hero.svg" class="max-w-2xl rounded-lg shadow-2xl" />
+			<div>
+				<h1 class="text-5xl font-bold">Welcome to KONDA</h1>
+				<p class="py-6">
+					Managing research data is complex—structuring, annotating, and ensuring FAIR compliance can be
+					time-consuming. Our tool simplifies this process by leveraging AI to automatically extract key
+					entities, identify relationships, and generate structured ontologies and knowledge graphs. With
+					built-in feedback loops, researchers stay in control, refining outputs to match their needs. Save
+					time, enhance data interoperability, and streamline your RDM workflow.
+				</p>
+				<a href="/tool/upload-dataset" class="btn btn-primary">Get Started</a>
+			</div>
+		</div>
+	</div>
+	<!-- Force Load the following css classes -->
+	<div class="hidden">
+		<div class="badge-primary"></div>
+		<div class="badge-secondary"></div>
+	</div>
+</div>
+{{ end }}

@@ -1,0 +1,55 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+include_ext = ["go", "templ", "html", "json", "md", "js", "ts", "css", "scss"]
+cmd = "npm run build && go build -o ./tmp/konda.exe ."
+bin = "tmp/konda.exe"
+exclude_dir = [
+  ".git",
+  ".parcel-cache",
+  "bin",
+  "dist",
+  "node_modules",
+  "web\\static\\generated-frontend",
+  "web/static/generated-frontend",
+  "tmp",
+  "tests",
+  "vendor",
+  "tmp-workspaces",
+  "example_files",
+]
+exclude_regex = ["_test\\.go", "_templ\\.go"]
+exclude_unchanged = false
+follow_symlink = false
+log = "build-errors-air.log"
+poll = false
+poll_interval = 500
+delay = 1000
+stop_on_error = true
+send_interrupt = true
+kill_delay = 500
+rerun = false
+rerun_delay = 500
+
+[log]
+time = false
+main_only = false
+
+[color]
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+clean_on_exit = true
+
+[screen]
+clear_on_rebuild = true
+keep_scroll = true
+
+[proxy]
+enabled = true
+app_port = 5050
+proxy_port = 5051

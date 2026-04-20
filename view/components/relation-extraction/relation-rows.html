@@ -1,0 +1,93 @@
+{{ define "relation-rows" }}
+
+{{ $entityLabels := .EntityLabels }}
+{{ range $index, $relation := .Relations }}
+<tr id="relation-{{ $index }}">
+    <td>
+        <select id="relation-select-subject-{{ $index }}"
+                name="relation-subject-{{ $index }}"
+                class="select select-sm w-full text-sm"
+                hx-trigger="change"
+                hx-put="/tool/relation-extraction/relations/{{ $index }}"
+                hx-target="#relation-table-body"
+                hx-swap="none">
+            <option disabled {{ if not $relation.Subject }}selected{{ end }}>Select Label</option>
+            {{ range $opt := $entityLabels }}
+            <option value="{{ $opt }}" {{ if (eq $opt $relation.Subject) }}selected{{ end }}>{{ $opt }}</option>
+            {{ end }}
+        </select>
+    </td>
+    <td>
+        <div x-data="{ 
+                selectedValue: '{{ if .Verb }}{{ .Verb }}{{ else }}{{if .SuggestedVerbs }}{{ index .SuggestedVerbs 0 }}{{ else }}{{ end }}{{ end }}',
+                showDropdown: false 
+            }"
+             class="relative">
+            <!-- Input Field -->
+            <input type="text"
+                   x-model="selectedValue"
+                   name="relation-verb-{{ $index }}"
+                   placeholder="Select or enter..."
+                   autocomplete="off"
+                   class="input input-sm w-full text-sm"
+                   x-ref="inputField"
+                   @focus="showDropdown = true"
+                   @input="showDropdown = false"
+                   @click.away="showDropdown = false"
+                   @keydown.enter.prevent
+                   hx-trigger="blur delay:200ms"
+                   hx-put="/tool/relation-extraction/relations/{{ $index }}"
+                   hx-target="#relation-table-body"
+                   hx-swap="none" />
+            <!-- Button -->
+            <div
+                 class="absolute text-xs right-3 top-1/2 transform -translate-y-1/2 scale-75 hover:bg-base-200 pointer-events-none">
+                ▼
+            </div>
+            <!-- Dropdown Options -->
+            <ul x-show="showDropdown"
+                class="absolute mt-1 w-full bg-base-100 border border-base-300 rounded-lg shadow-md z-10">
+                {{ range $index, $option := .SuggestedVerbs }}
+                <li class="p-2 hover:bg-base-200 cursor-pointer"
+                    @click="selectedValue = '{{ $option }}'; showDropdown = false">
+                    {{ $option }}
+                </li>
+                {{ end }}
+                <li class="p-2 text-base-content/60 italic hover:bg-base-200 cursor-pointer"
+                    @mousedown.prevent
+                    @click="selectedValue = ''; $nextTick(() => $refs.inputField.focus()); showDropdown = false">
+                    Enter your own text...
+                </li>
+            </ul>
+        </div>
+    </td>
+    <td class="pr-0">
+        <select id="relation-select-object-{{ $index }}"
+                name="relation-object-{{ $index }}"
+                class="select select-sm w-full select-text"
+                hx-trigger="change"
+                hx-put="/tool/relation-extraction/relations/{{ $index }}"
+                hx-target="#relation-table-body"
+                hx-swap="none">
+            <option disabled {{ if not $relation.Object }}selected{{ end }}>Select Label</option>
+            {{ range $opt := $entityLabels }}
+            <option value="{{ $opt }}" {{ if (eq $opt $relation.Object) }}selected{{ end }}>{{ $opt }}</option>
+            {{ end }}
+        </select>
+    </td>
+    <td class="w-10 text-center px-2">
+        <button class="btn btn-ghost btn-sm text-base-content/60 hover:text-error"
+                type="button"
+                hx-delete="/tool/relation-extraction/relations/{{ $index }}"
+                hx-target="#relation-table-body"
+                hx-swap="innerHTML swap:100ms">
+            <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                 viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </td>
+</tr>
+{{ end }}
+{{ end }}

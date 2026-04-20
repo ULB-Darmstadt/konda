@@ -1,0 +1,38 @@
+# Binaries / builds
+konda
+konda.exe
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Local env / secrets
+.env
+.env.*
+!.env.example
+
+# Local databases / runtime state
+db-*.db
+*.db
+tokenTracker.txt
+*.dump
+
+# Allow the BaseDB dump tracked via Git LFS
+!dump/basedb.dump
+
+# Workspaces / uploads
+tmp-workspaces/
+tmp-workspace/
+
+# Node / frontend build artifacts
+node_modules/
+.parcel-cache/
+web/static/generated-frontend/
+
+# Go build cache (if someone sets GOCACHE here)
+gocache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/

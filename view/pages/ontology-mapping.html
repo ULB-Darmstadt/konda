@@ -1,0 +1,207 @@
+{{ define "meta" }}{{ end }}
+
+{{ define "styles" }}{{ end }}
+
+{{ define "scripts" }}{{ end }}
+
+{{ define "tool" }}
+<div class="container mx-auto p-4 pb-32"
+     x-data="{ tasksRunning: false }"
+     @tasks-running.window="tasksRunning = true"
+     @tasks-complete.window="tasksRunning = false">
+
+    <!-- Help Section -->
+    <div class="relative" x-data="helpToggle()" x-init="init()">
+        <div x-show="helpOpen" x-transition x-cloak class="mb-4">
+            <div class="card bg-base-100 text-base-content shadow-xl">
+                <div class="card-body">
+                    <div class="flex justify-between items-start">
+                        <h2 class="card-title">Help: Link Your Terms to Ontology Vocabulary</h2>
+                        <button @click="toggleHelpOpen()" class="btn btn-sm btn-circle">
+                            ✕
+                        </button>
+                    </div>
+                    <div class="leading-relaxed space-y-2">
+                        <p>
+                            In this step, the application has tried to match the terms from your dataset - entities,
+                            categories, and relations - to concepts from the ontologies you selected earlier. This
+                            process is called ontology based annotation, and it helps connect your knowledge graph to
+                            widely-used vocabularies, making it more consistent, searchable, and reusable in the future.
+                        </p>
+                        <p>
+                            For each of your entity terms, the app suggests a related concept from an ontology. By
+                            default, these are linked using a general "has related match" connection, which indicates
+                            that your term and the ontology term are associated. This approach keeps your original
+                            wording intact while still establishing a meaningful link to recognized, standardized
+                            vocabulary.
+                        </p>
+                        <p>
+                            However, you may find that some suggested matches are exact matches - terms that mean the
+                            same thing. In those cases:
+                        </p>
+
+                        <ul class="list-disc list-inside pl-4 space-y-1">
+                            <li>You can tick the "Replace" checkbox on the right side, to indicate that the ontology
+                                term should replace your original entity or category.</li>
+                        </ul>
+                        <p>
+                            For relations (the connecting verbs), we always use the mapped terminology. But here it's
+                            important to check whether the direction of the mapped term matches your original meaning:
+                        </p>
+
+                        <ul class="list-disc list-inside pl-4 space-y-1">
+                            <li>If the direction is reversed, you can tick the "Invert" checkbox to reflect that change.
+                            </li>
+                        </ul>
+                        <p>
+                            As with previous steps, your task here is to:
+                        </p>
+
+                        <ul class="list-disc list-inside pl-4 space-y-1">
+                            <li>Review all suggested annotations</li>
+                            <li>Correct any incorrect matches</li>
+                            <li>Delete any that don't belong</li>
+                            <li>Add new annotations by searching for ontology terms that match your entity, category, or
+                                relation</li>
+                        </ul>
+                        <p>
+                            You can add annotations for terms that haven't been matched yet by selecting a label from
+                            your entities, categories, or relation verbs, and searching for a matching concept in the
+                            ontology database. Once selected, decide whether it's a direct match (tick "Replace") or, in
+                            the case of a relation, if it has the opposite direction (tick "Invert").
+                        </p>
+                        <p>
+                            <em>
+                                The goal of this step is to reuse existing vocabulary whenever possible. Instead of
+                                redefining terms that already exist in established ontologies, we aim to link to them
+                                using their standard identifiers (URIs). This improves the quality and interoperability
+                                of your knowledge graph.
+                            </em>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button @click="toggleHelpOpen()"
+                class="btn btn-info btn-circle btn-lg fixed bottom-20 right-6 z-50 shadow-lg tooltip tooltip-left"
+                data-tip="Need help?">
+            <span class="text-sm">Help</span>
+        </button>
+    </div>
+
+    <div id="running-tasks"
+         hx-get="/tool/running-tasks"
+         hx-trigger="load, every 5s"
+         hx-swap="innerHTML">
+        <!-- Task Card populated by server -->
+    </div>
+
+    <div x-show="!tasksRunning" x-transition x-cloak>
+        <form
+              id="ontology-mapping-form"
+              hx-post="/tool/ontology-mapping"
+              hx-swap="none">
+
+            <div class="card bg-base-100 shadow-xl mb-4">
+                <div class="card-body">
+                    <div>
+                        <h2 class="card-title">Ontology Annotations</h2>
+
+                        <div
+                             id="mapping-table-container"
+                             hx-get="/tool/ontology-mapping/mappings"
+                             hx-trigger="load, tasks-complete from:body"
+                             hx-swap="innerHTML">
+                            <!-- This gets filled dynamically -->
+                        </div>
+
+                        <div id="mapping-table-add"
+                             class="container my-8 px-4">
+                            <button class="btn btn-sm btn-outline btn-primary w-full"
+                                    hx-get="/tool/ontology-mapping/mappings/add"
+                                    hx-trigger="click"
+                                    hx-swap="innerHtml"
+                                    hx-target="#mapping-table-add">
+                                <span class="mr-2">+</span> Add Annotation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Always Visible Bottom Buttons -->
+    <div class="fixed bottom-0 left-0 w-full bg-base-100 inset-shadow-sm pb-2 pt-3 px-4 z-50">
+        <div class="container mx-auto flex justify-between items-center px-10">
+
+            <!-- Left -->
+            <div class="flex items-center">
+                <button class="btn w-28" type="button"
+                        onclick="window.location.href='/tool/relation-extraction';">
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14.9991 19L9.83911 14C9.56672 13.7429 9.34974 13.433 9.20142 13.0891C9.0531 12.7452 8.97656 12.3745 8.97656 12C8.97656 11.6255 9.0531 11.2548 9.20142 10.9109C9.34974 10.567 9.56672 10.2571 9.83911 10L14.9991 5"
+                              stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span class="block w-full text-center">Back</span>
+                </button>
+            </div>
+
+            <!-- Center -->
+            <div class="flex justify-center items-center gap-4">
+                <button
+                        class="btn w-28"
+                        hx-put="/tool/running-tasks/restart?type=Ontology%20Mapping"
+                        hx-swap="innerHTML"
+                        hx-target="#running-tasks"
+                        type="button">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g>
+                            <path d="M3 11.9998C3 7.02919 7.02944 2.99976 12 2.99976C14.8273 2.99976 17.35 4.30342 19 6.34242"
+                                  stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            </path>
+                            <path d="M19.5 2.99976L19.5 6.99976L15.5 6.99976" stroke="currentColor"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round" stroke-width="2"></path>
+                            <path d="M21 11.9998C21 16.9703 16.9706 20.9998 12 20.9998C9.17273 20.9998 6.64996 19.6961 5 17.6571"
+                                  stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            </path>
+                            <path d="M4.5 20.9998L4.5 16.9998L8.5 16.9998" stroke="currentColor" stroke-linecap="round"
+                                  stroke-linejoin="round" stroke-width="2"></path>
+                        </g>
+                    </svg>
+                    Rerun
+                </button>
+            </div>
+
+            <!-- Right -->
+            <div class="flex justify-end items-center">
+                <button
+                        type="submit"
+                        form="ontology-mapping-form"
+                        class="relative btn btn-primary w-30 text-center"
+                        :disabled="tasksRunning"
+                        x-cloak>
+                    <span x-show="!tasksRunning" x-cloak class="block w-full text-center">Submit</span>
+                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 5L14.15 10C14.4237 10.2563 14.6419 10.5659 14.791 10.9099C14.9402 11.2539 15.0171 11.625 15.0171 12C15.0171 12.375 14.9402 12.7458 14.791 13.0898C14.6419 13.4339 14.4237 13.7437 14.15 14L9 19"
+                              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <span x-show="tasksRunning" class="flex items-center justify-center gap-2 w-full" x-cloak>
+                        <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10"
+                                    stroke="currentColor" stroke-width="4" fill="none" />
+                            <path class="opacity-75" fill="currentColor"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                        </svg>
+                        Running...
+                    </span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{{ end }}

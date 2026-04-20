@@ -1,0 +1,63 @@
+{{ define "task-card" }}
+{{ if .Tasks }}
+<div class="card bg-base-100 shadow-xl mb-4">
+    <div class="card-body">
+        <h2 class="card-title text-base-content">Running Tasks</h2>
+        <ul class="divide-y divide-base-100">
+            {{ range .Tasks }}
+            <li class="py-2">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <span class="font-semibold text-base-content">{{ .Key.Type }}</span>
+                        <span class="ml-2 badge badge-soft badge-{{ .Status }}">{{ .Status }}</span>
+                        {{ if .Message }}
+                        <div class="text-sm text-base-content/70 mt-1">{{ .Message }}</div>
+                        {{ end }}
+                        {{ if .Err }}
+                        <div class="text-sm text-error mt-1">{{ .Err }}</div>
+                        {{ end }}
+                    </div>
+                    {{ if or (eq .Status "running") (eq .Status "queued") }}
+                    <button class="btn btn-ghost btn-sm text-base-content hover:text-error ml-4 shrink-0"
+                            hx-delete="/tool/running-tasks/cancel?type={{ .Key.Type }}"
+                            hx-swap="innerHTML"
+                            hx-target="#running-tasks">
+                        <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                             viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                    {{ end }}
+                    {{ if or (eq .Status "canceled") (eq .Status "error") }}
+                    <button class="btn btn-ghost btn-sm text-base-content hover:text-primary ml-4 shrink-0"
+                            hx-put="/tool/running-tasks/restart?type={{ .Key.Type }}"
+                            hx-swap="innerHTML"
+                            hx-target="#running-tasks">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 24 24"
+                             fill="none">
+                            <path d="M12 2.99988C16.9706 2.99988 21 7.02931 21 11.9999C21 16.9704 16.9706 20.9999 12 20.9999C7.02944 20.9999 3 16.9704 3 11.9999C3 9.17261 4.30367 6.64983 6.34267 4.99988"
+                                  stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                  stroke-width="2" />
+                            <path d="M3 4.49988H7V8.49988" stroke="currentColor" stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2" />
+                        </svg>
+                    </button>
+                    {{ end }}
+                </div>
+
+                {{ if eq .Status "running" }}
+                {{ if .Progress }}
+                <progress class="progress w-full mt-2" value="{{ .Progress | mul 100 }}" max="100"></progress>
+                {{ else }}
+                <progress class="progress w-full mt-2"></progress>
+                {{ end }}
+                {{ end }}
+            </li>
+            {{ end }}
+        </ul>
+    </div>
+</div>
+{{ end }}
+{{ end }}

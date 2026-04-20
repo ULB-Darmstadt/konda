@@ -1,0 +1,96 @@
+@prefix ex: <http://example.org/ontology#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Dataset 1: Climate Change Research Dataset
+ex:Dataset1 a ex:Dataset ;
+    rdfs:label "Global Climate Change Impact Data" ;
+    ex:title "Global Climate Change Impact Data" ;
+    ex:description "A dataset containing temperature, CO2 levels, and weather patterns from 1900 to 2025." ;
+    ex:issuedDate "2024-01-15T00:00:00Z"^^xsd:dateTime ;
+    ex:hasFile ex:ContextFile1 ;
+    ex:hasConcept ex:Concept1, ex:Concept2 .
+
+# Context File for Dataset 1
+ex:ContextFile1 a ex:ContextFile ;
+    rdfs:label "Climate Change Research Paper" ;
+    ex:fileFormat "PDF" ;
+    ex:fileSize "2.5"^^xsd:decimal .
+
+# Concepts for Dataset 1
+ex:Concept1 a ex:Concept ;
+    rdfs:label "Climate Modeling" ;
+    ex:definition "The use of mathematical representations of the climate system to study its behavior over time." ;
+    ex:isSubcategoryOf ex:Category1 .
+
+ex:Concept2 a ex:Concept ;
+    rdfs:label "CO2 Emissions" ;
+    ex:label "CO2 Emissions" ;
+    ex:definition "The release of carbon dioxide into the atmosphere from various sources." ;
+    ex:isSubcategoryOf ex:Category1 .
+
+ex:Category1 a ex:Category ;
+    rdfs:label "Environmental Science" .
+
+# Dataset 2: Machine Learning Image Recognition Dataset
+ex:Dataset2 a ex:Dataset ;
+    rdfs:label "ImageNet Subset for Object Recognition" ;
+    ex:title "ImageNet Subset for Object Recognition" ;
+    ex:description "A curated subset of the ImageNet dataset for object classification tasks." ;
+    ex:issuedDate "2023-11-20T00:00:00Z"^^xsd:dateTime ;
+    ex:hasFile ex:ContextFile2 ;
+    ex:hasConcept ex:Concept3, ex:Concept4 .
+
+# Context File for Dataset 2
+ex:ContextFile2 a ex:ContextFile ;
+    rdfs:label "ImageNet Dataset Readme" ;
+    ex:fileFormat "TXT" ;
+    ex:fileSize "0.8"^^xsd:decimal .
+
+# Concepts for Dataset 2
+ex:Concept3 a ex:Concept ;
+    rdfs:label "Deep Learning" ;
+    ex:definition "A subset of machine learning that uses neural networks with many layers to model complex patterns in data." ;
+    ex:isSubcategoryOf ex:Category2 .
+
+ex:Concept4 a ex:Concept ;
+    rdfs:label "Object Recognition" ;
+    ex:definition "The process of identifying and classifying objects in images." ;
+    ex:isSubcategoryOf ex:Category2 .
+
+ex:Category2 a ex:Category ;
+    rdfs:label "Artificial Intelligence" .
+
+# Dataset 3: Genomics Research Dataset
+ex:Dataset3 a ex:Dataset ;
+    rdfs:label "Human Genome Variant Data" ;
+    ex:title "Human Genome Variant Data" ;
+    ex:description "A dataset containing genetic variants across different human populations." ;
+    ex:issuedDate "2022-09-10T00:00:00Z"^^xsd:dateTime ;
+    ex:hasFile ex:ContextFile3 ;
+    ex:hasConcept ex:Concept5, ex:Concept6 .
+
+# Context File for Dataset 3
+ex:ContextFile3 a ex:ContextFile ;
+    rdfs:label "Human Genome Variant Analysis Paper" ;
+    ex:fileFormat "CSV" ;
+    ex:fileSize "15.3"^^xsd:decimal .
+
+# Concepts for Dataset 3
+ex:Concept5 a ex:Concept ;
+    rdfs:label "Genomic Sequencing" ;
+    ex:definition "The process of determining the complete DNA sequence of an organism's genome." ;
+    ex:isSubcategoryOf ex:Category3 .
+
+ex:Concept6 a ex:Concept ;
+    rdfs:label "Population Genetics" ;
+    ex:definition "The study of genetic variation within populations and its evolutionary implications." ;
+    ex:isSubcategoryOf ex:Category3 .
+
+ex:Category3 a ex:Category ;
+    rdfs:label "Genetics and Biotechnology" .

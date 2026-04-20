@@ -1,0 +1,138 @@
+{{ define "add-mapping" }}
+
+<div id="mapping-table-add" hx-swap-oob="true">
+    {{ if .Adding }}
+    {{ $selectedLabel := .SelectedLabel }}
+    <fieldset class="fieldset mb-2 mt-8">
+        <input type="hidden" name="mapping-term-add" value="{{ .Mapping.Label }}">
+        <input type="hidden" name="mapping-uri-add" value="{{ .Mapping.URI }}">
+        <input type="hidden" name="mapping-description-add" value="{{ .Mapping.Description }}">
+        <legend class="fieldset-legend">Add a new Mapping</legend>
+        <table class="table table-compact table-fixed w-full">
+            <thead class="text-base-content">
+                <tr>
+                    <th class="w-3/12">Label</th>
+                    <th class="w-4/12">Ontology Term</th>
+                    <th class="w-4/12">URI</th>
+                    <th class="w-[5rem] sm:w-[6rem] text-right">Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr id="mapping-row-add">
+                    <td>
+                        <select id="mapping-selected-label-add"
+                                name="mapping-selected-label-add"
+                                class="select select-sm w-full text-sm">
+                            <option disabled selected>Select Label</option>
+                            {{ range $opt := .AllLabels }}
+                            <option {{ if (eq $opt $selectedLabel) }}selected{{ end }}>{{ $opt }}</option>
+                            {{ end }}
+                        </select>
+                    </td>
+                    <td class="relative">
+                        <fieldset class="w-full"
+                                  x-data="{ isFocused: false }"
+                                  @focusin="isFocused = true"
+                                  @click.away="setTimeout(() => isFocused = false, 100)">
+                            <div class="relative w-full">
+                                <input
+                                       id="mapping-search-term-add"
+                                       name="mapping-search-term-add"
+                                       class="input input-sm text-sm w-full"
+                                       type="text"
+                                       value="{{ .Mapping.Label }}"
+                                       placeholder="Search for Ontology Terms"
+                                       autocomplete="off"
+                                       @keydown.enter.prevent
+                                       hx-trigger="input changed delay:200ms, focus once"
+                                       hx-post="/tool/ontology-mapping/search-terms"
+                                       hx-target="#mapping-search-results-add"
+                                       hx-vals='{"mapping-input-search-term-id": "add"}'
+                                       hx-indicator="#spinner-add"
+                                       hx-swap="innerHTML" />
+                                <div id="spinner-add" class="absolute right-2 top-1/2 -translate-y-1/2 htmx-indicator">
+                                    <svg class="animate-spin h-4 w-4 text-base-content/60"
+                                         fill="currentColor" viewBox="0 0 32 32"
+                                         xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.28">
+                                        <path
+                                              d="M16 0.75c-0.69 0-1.25 0.56-1.25 1.25s0.56 1.25 1.25 1.25v0c7.042 0.001 12.75 5.71 12.75 12.751 0 3.521-1.427 6.709-3.734 9.016v0c-0.226 0.226-0.365 0.538-0.365 0.883 0 0.69 0.56 1.25 1.25 1.25 0.346 0 0.659-0.14 0.885-0.367l0-0c2.759-2.76 4.465-6.572 4.465-10.782 0-8.423-6.828-15.251-15.25-15.251h-0z">
+                                        </path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div id="mapping-search-results-add"
+                                 x-show="isFocused">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </fieldset>
+                    </td>
+                    <td>
+                        {{ if .Mapping.URI }}
+                        <div class="tooltip w-full break-words max-w-sm" data-tip="{{ .Mapping.URI }}">
+                            <p class="text-sm text-base-content/60 truncate mt-auto">
+                                <a target="_blank" class="link link-hover" href="{{ .Mapping.URI }}">{{ .Mapping.URI
+                                    }}</a>
+                            </p>
+                        </div>
+                        {{ end }}
+                    </td>
+                    <td class="flex text-center px-1 gap-1 items-center justify-end max-w-[6rem] sm:max-w-[8rem]">
+                        <div class="tooltip w-full break-words max-w-sm z-30"
+                             data-tip="Replace Label With Ontology Term">
+                            <input
+                                   id="mapping-checkbox-replace-add"
+                                   name="mapping-checkbox-replace-add"
+                                   type="checkbox"
+                                   class="checkbox checkbox-sm checkbox-primary" />
+                        </div>
+                        <div class="tooltip w-full break-words max-w-sm z-30"
+                             data-tip="Invert Relation Direction">
+                            <input
+                                   id="mapping-checkbox-invert-add"
+                                   name="mapping-checkbox-invert-add"
+                                   type="checkbox"
+                                   class="checkbox checkbox-sm checkbox-secondary" />
+                        </div>
+                        <div class="tooltip w-full break-words max-w-sm z-30" data-tip="Close">
+                            <button class="btn btn-ghost btn-xs px-1 text-base-content/60 hover:text-error"
+                                    type="button"
+                                    hx-delete="/tool/ontology-mapping/mappings/add"
+                                    hx-target="#mapping-table-add"
+                                    hx-swap="innerHTML swap:300ms">
+                                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                     viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    <div id="mapping-table-add" class="container my-8 px-4">
+        <button class="btn btn-sm btn-outline btn-primary w-full"
+                type="button"
+                hx-post="/tool/ontology-mapping/mappings"
+                hx-target="#mapping-table-container"
+                hx-params="mapping-uri-add, mapping-term-add, mapping-description-add, mapping-selected-label-add, mapping-search-term-add, mapping-checkbox-invert-add, mapping-checkbox-replace-add"
+                hx-swap="innerHTML swap:100ms">
+            <span class="mr-1">+</span> Submit Mapping
+        </button>
+    </div>
+    {{ else }}
+    <div id="mapping-table-add" class="container my-8 px-4">
+        <button class="btn btn-sm btn-outline btn-primary w-full"
+                hx-get="/tool/ontology-mapping/mappings/add"
+                hx-trigger="click"
+                hx-swap="innerHtml"
+                hx-target="#mapping-table-add">
+            <span class="mr-1">+</span> Add Mapping
+        </button>
+    </div>
+    {{ end }}
+</div>
+
+{{ end }}

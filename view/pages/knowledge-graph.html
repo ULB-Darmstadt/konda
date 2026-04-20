@@ -1,0 +1,374 @@
+{{ define "meta" }}
+<!-- TODO: add some proper text here when you got the name-->
+<meta name="keywords" content="AI assisted 
+Research Data Management Tool for Knowledge 
+Graph creation.">
+<meta name="description" content="Welcome to 
+the KONDA!">
+{{ end }}
+
+{{ define "styles" }}{{ end }}
+
+{{ define "scripts" }}
+<script type="module">
+	// NVL usage
+	/*let nvlInstance = null;
+	  document.addEventListener("DOMContentLoaded", fetchAndDisplayGraphData);
+	  document.addEventListener("tasks-complete", fetchAndDisplayGraphData);
+	
+	  async function fetchAndDisplayGraphData() {
+		try {
+		  const response = await fetch("/tool/knowledge-graph/graph-data");
+		  const data = await response.json();
+		  const prefix = "{{ .Prefix }}"
+		  const colorMap = {
+			[`${prefix}__Dataset`]: "#FFC454",
+			[`${prefix}__Concept`]: "#57C7E3",
+			[`${prefix}__ContextFile`]: "#C990C0",
+			[`${prefix}__Category`]: "#F79767",
+			"external": "#8DCC93",
+			"Default": "#4C8EDA"
+		  };
+	
+		  if (!data.nodes || !data.links) {
+			return
+		  }
+	
+		  const nodes = data.nodes.map(node => {
+			const label = node.labels.find(l => l.toLowerCase().includes("external")) ||
+			  node.labels.find(l => l.toLowerCase().includes("category")) ||
+			  node.labels.find(l => l.toLowerCase().includes("concept")) ||
+			  node.labels[node.labels.length - 1];
+	
+			return {
+			  id: node.id.toString(),
+			  captions: [{ value: node.prefLabel }],
+			  captionSize: 2,
+			  color: colorMap[label] || colorMap["Default"],
+			  hovered: node.labels.includes(`${prefix}__Dataset`),
+			  uri: node.uri || "",
+			  pinned: node.labels.includes(`${prefix}__Dataset`),
+			};
+		  });
+	
+		  const relationships = data.links.map(link => ({
+			id: link.id.toString(),
+			from: link.source.toString(),
+			to: link.target.toString(),
+			captions: [{ value: link.prefLabel }],
+			captionSize: 1.5,
+			uri: link.uri || "",
+		  }));
+	
+		  let renderer = "webgl"
+		  const options = {
+			layout: 'forceDirected',
+			initialZoom: 1,
+			renderer: renderer,
+			disableTelemetry: true,
+		  };
+	
+		  const container = document.getElementById('graph-container');
+		  if (container) {
+			if (nvlInstance) {
+			  nvlInstance.destroy();
+			  nvlInstance = null;
+			}
+	
+			let setCanvasRenderer = () => { };
+			let setWebglRenderer = () => { };
+	
+			nvlInstance = new neo4jNVL.NVL(container, nodes, relationships, options, {
+			  onLayoutDone: () => {
+				setCanvasRenderer();
+			  },
+			});
+	
+			setCanvasRenderer = () => {
+			  nvlInstance.setRenderer("canvas")
+			};
+	
+			const { DragNodeInteraction, PanInteraction, ZoomInteraction, ClickInteraction, HoverInteraction } = neo4jNVLInteraction;
+	
+			const dragNodeInteraction = new DragNodeInteraction(nvlInstance);
+			new PanInteraction(nvlInstance);
+			new ZoomInteraction(nvlInstance);
+			new ClickInteraction(nvlInstance);
+	
+			dragNodeInteraction.updateCallback('onDragEnd', (nodes) => {
+			  const node = nodes[0]
+			  if (node) {
+				nvlInstance.pinNode(node.id);
+				nvlInstance.updateElementsInGraph([{ id: node.id, hovered: node.pinned }], [])
+			  }
+			});
+	
+			let formatURI = (uri) => {
+			  if (uri.startsWith("http")) {
+				uri = `<a href="${uri}" target="_blank" class="break-all hover:text-blue-500 hover:underline">${uri}</a>`;
+				return uri
+			  }
+			  return uri
+			}
+	
+			container.addEventListener("click", (e) => {
+			  const { nvlTargets } = nvlInstance.getHits(e);
+			  const infoPanel = document.getElementById("info-panel");
+			  const infoContent = document.getElementById("info-content");
+	
+			  if (nvlTargets.nodes.length > 0) {
+				const node = nvlTargets.nodes[0];
+				infoContent.innerHTML = `<strong>Label:</strong> ${node.data.captions[0].value} <br> <strong>URI:</strong> ${formatURI(node.data.uri)}`;
+				infoPanel.classList.remove("hidden");
+			  } else if (nvlTargets.relationships.length > 0) {
+				const link = nvlTargets.relationships[0];
+				infoContent.innerHTML = `<strong>Label:</strong> ${link.data.captions[0].value} <br> <strong>URI:</strong> ${formatURI(link.data.uri)}`;
+				infoPanel.classList.remove("hidden");
+			  } else {
+				infoPanel.classList.add("hidden");
+			  }
+			});
+	
+			container.addEventListener("dblclick", (e) => {
+			  const { nvlTargets } = nvlInstance.getHits(e);
+			  const node = nvlTargets.nodes[0];
+	
+			  if (node) {
+				nvlInstance.unPinNode([node.data.id]);
+				nvlInstance.updateElementsInGraph([{ id: node.data.id, hovered: node.data.pinned }], []);
+			  }
+			});
+		  }
+		} catch (error) {
+		  console.error("Failed to load graph data:", error);
+		}
+	  };
+	*/
+</script>
+{{ end }}
+
+{{ define "tool" }}
+<div class="container mx-auto p-4 pb-32" x-data="{ tasksRunning: false }" @tasks-running.window="tasksRunning = true"
+	@tasks-complete.window="tasksRunning = false">
+
+	<!-- Help Section -->
+	<div class="relative" x-data="helpToggle()" x-init="init()">
+		<div x-show="helpOpen" x-transition x-cloak class="mb-4">
+			<div class="card bg-base-100 text-base-content shadow-xl">
+				<div class="card-body">
+					<div class="flex justify-between items-start">
+						<h2 class="card-title">Help: Explore and Export Your Knowledge Graph</h2>
+						<button @click="toggleHelpOpen()" class="btn btn-sm btn-circle">
+							✕
+						</button>
+					</div>
+					<div class="leading-relaxed space-y-2">
+						<p>
+							This final screen lets you explore the knowledge graph that was built from your dataset,
+							documents, and
+							the information you provided in the previous steps. You can use this view to better
+							understand the
+							structure of your data, and to export the graph for future use.
+						</p>
+						<p>
+							The top section shows an interactive visualization of the knowledge graph:
+						</p>
+						<!--
+						Non-generic visualization help (renderer-dependent):
+						- Some renderers may not support pin/unpin, dblclick behavior, or click-for-details.
+						- Some renderers may use different color/type styling.
+
+						<ul class="list-disc list-inside pl-4 space-y-1">
+							<li> Zoom and pan to navigate the view </li>
+							<li> Drag nodes to reposition them (they'll stay pinned until you double-click to unpin)
+							</li>
+							<li> Click on nodes or edges to see more details like their label and linked ontology URI
+							</li>
+						</ul>
+						<p>
+							The structure of the graph follows a consistent pattern:
+						</p>
+						<ul class="list-disc list-inside pl-4 space-y-1">
+							<li>At the center, you'll see your dataset (yellow node).</li>
+							<li>It's connected to your context files (purple nodes) via a hasContextFile link.</li>
+							<li>The dataset is also connected to the main concepts (blue nodes, named entities) using
+								hasConcept
+								links.</li>
+							<li>Each concept may be connected to a broader category (orange node) with a hasBroader
+								link.</li>
+							<li>Concepts and categories can also be linked to ontology terms (green nodes) using
+								hasRelated.</li>
+						</ul>
+						-->
+						<p>
+							If an ontology term was marked as a direct match, it may replace the original concept or
+							category entirely
+							in the graph. Relations you defined earlier are also displayed as connections between
+							concepts and
+							categories. It's normal for multiple links to exist between the same nodes - real-world
+							concepts often
+							relate to each other in several different ways.
+						</p>
+						<p>
+							The terms hasBroader and hasRelated come from a standard (SKOS). They may sound technical,
+							but they help
+							enable smarter queries and future reasoning across graphs.
+						</p>
+						<p>
+							Below the visual graph:
+						</p>
+						<ul class="list-disc list-inside pl-4 space-y-1">
+							<li>You'll find a text version of the graph, written in a standard format (Turtle).</li>
+							<li>See the ontology behind it - essentially the schema used to organize your data.</li>
+							<li>At the bottom choose a format and export your graph</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<button @click="toggleHelpOpen()"
+			class="btn btn-info btn-circle btn-lg fixed bottom-20 right-6 z-50 shadow-lg tooltip tooltip-left"
+			data-tip="Need help?">
+			<span class="text-sm">Help</span>
+		</button>
+	</div>
+
+	<!-- Running Tasks (Always Visible) -->
+	<div id="running-tasks" hx-get="/tool/running-tasks" hx-trigger="load, every 5s" hx-swap="innerHTML">
+		<!-- Task Card populated by server -->
+	</div>
+
+	<!-- Main Content Hidden While Tasks Running -->
+	<div x-show="!tasksRunning" x-transition x-cloak>
+
+		<!-- Knowledge Graph -->
+		<div class="card bg-base-100 shadow-xl mb-4">
+			<div class="card-body relative">
+				<h2 class="card-title text-base-content">Knowledge Graph</h2>
+				<div class="flex flex-row border border-base-300 rounded justify-center relative">
+					<!-- NVL container -->
+					<!-- 
+          <div id="graph-container" class="min-h-[75vh] w-full select-none relative"></div>
+          <div id="info-panel"
+               class="absolute bottom-2 right-2 bg-base-100 shadow-lg rounded-lg p-4 w-1/4 hidden border border-base-300">
+            <h3 class="text-lg font-semibold mb-2 text-base-content">Node Information</h3>
+            <p id="info-content" class="text-sm text-base-content/80 break-words overflow-hidden"></p>
+          </div>
+          -->
+					<div id="graph-container"
+						class="min-h-[40vh] w-full select-none relative flex items-center justify-center p-6 text-base-content/70 text-center">
+						<p>
+							Interactive graph visualization is not enabled in this distributed build.
+							You are free to integrate a compatible graph visualization library locally if you wish.
+							You can still inspect the RDF representation of the graph and the ontology below,
+							and export them in your preferred format.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Knowledge Graph -->
+		<div class="card bg-base-100 shadow-xl mb-4">
+			<div class="card-body">
+				<h2 class="card-title text-base-content">Knowledge Graph</h2>
+				<div id="knowledge-graph-data"
+					class="mockup-code w-full border border-base-300 bg-base-100 text-base-content rounded-lg"
+					hx-get="/tool/knowledge-graph/rdf-data" hx-trigger="tasks-complete from:window, load"
+					hx-target="#rdf-data" hx-swap="innerHTML">
+					<div class="overflow-auto max-h-96 p-4">
+						<code id="rdf-data" class="text-sm font-mono whitespace-pre-wrap">waiting ...</code>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Ontology -->
+		<div class="card bg-base-100 shadow-xl mb-4">
+			<div class="card-body">
+				<h2 class="card-title text-base-content">Ontology</h2>
+				<div id="ontology-data"
+					class="mockup-code w-full border border-base-300 bg-base-100 text-base-content rounded-lg"
+					hx-get="/tool/knowledge-graph/onto-data" hx-trigger="tasks-complete from:window, load"
+					hx-target="#onto-data" hx-swap="innerHTML">
+					<div class="overflow-auto max-h-96 p-4">
+						<code id="onto-data" class="text-sm font-mono whitespace-pre-wrap">waiting ...</code>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Export Section -->
+		<div class="card bg-base-100 shadow-xl mb-4">
+			<div class="card-body">
+				<h2 class="card-title text-base-content">Export</h2>
+				<form method="GET" action="/tool/knowledge-graph/export-graph" class="space-y-4">
+					<fieldset class="form-control">
+						<legend class="fieldset-legend mb-2">Format</legend>
+						<div class="flex items-center space-x-2">
+							<select name="format" id="format" class="select select-bordered" required>
+								<option value="" disabled selected>Pick a format</option>
+								<option value="ttl">Turtle</option>
+								<option value="xml">RDF/XML</option>
+								<option value="jsonld">JSON-LD</option>
+							</select>
+							<button type="submit" class="btn">Export</button>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+
+	</div>
+
+	<!-- Always Visible Bottom Buttons -->
+	<div class="fixed bottom-0 left-0 w-full bg-base-100 inset-shadow-sm pb-2 pt-3 px-4 z-50">
+		<div class="container mx-auto flex justify-between items-center px-10">
+
+			<!-- Left -->
+			<div class="flex items-center">
+				<button class="btn w-28" type="button" onclick="window.location.href='/tool/ontology-mapping';">
+					<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path
+							d="M14.9991 19L9.83911 14C9.56672 13.7429 9.34974 13.433 9.20142 13.0891C9.0531 12.7452 8.97656 12.3745 8.97656 12C8.97656 11.6255 9.0531 11.2548 9.20142 10.9109C9.34974 10.567 9.56672 10.2571 9.83911 10L14.9991 5"
+							stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+						</path>
+					</svg>
+					<span class="block w-full text-center text-base-content">Back</span>
+				</button>
+			</div>
+
+			<!-- Center -->
+			<div class="flex justify-center items-center gap-4">
+				<button class="btn w-28" hx-put="/tool/running-tasks/restart?type=Knowledge%20Graph%20Creation"
+					hx-swap="innerHTML" hx-target="#running-tasks" type="button">
+					<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<g>
+							<path
+								d="M3 11.9998C3 7.02919 7.02944 2.99976 12 2.99976C14.8273 2.99976 17.35 4.30342 19 6.34242"
+								stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+							</path>
+							<path d="M19.5 2.99976L19.5 6.99976L15.5 6.99976" stroke="currentColor"
+								stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+							<path
+								d="M21 11.9998C21 16.9703 16.9706 20.9998 12 20.9998C9.17273 20.9998 6.64996 19.6961 5 17.6571"
+								stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+							</path>
+							<path d="M4.5 20.9998L4.5 16.9998L8.5 16.9998" stroke="currentColor" stroke-linecap="round"
+								stroke-linejoin="round" stroke-width="2"></path>
+						</g>
+					</svg>
+					Rerun
+				</button>
+			</div>
+
+			<!-- Right -->
+			<div class="flex justify-end items-center">
+			</div>
+
+		</div>
+	</div>
+
+</div>
+{{ end }}
