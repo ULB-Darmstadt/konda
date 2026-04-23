@@ -287,7 +287,7 @@ The tool is a pipeline of six steps.
 
 If you use KONDA in your research or application, please cite the following paper:
 
-> [1] S.-Y. Kim, M. Görz, and S. Geisler, “KONDA: An LLM-based Tool for Semantic Annotation and Knowledge Graph Creation Using Ontologies for Research Data,” in *Proc. 5th Int. Workshop on Scientific Knowledge: Representation, Discovery, and Assessment (Sci-K)*, Nara, Japan, CEUR-WS.org, Nov. 2025.
+> [1] S.-Y. Kim, M. Görz, and S. Geisler, “KONDA: An LLM-based Tool for Semantic Annotation and Knowledge Graph Creation Using Ontologies for Research Data,” in *Proc. 5th Int. Workshop on Scientific Knowledge: Representation, Discovery, and Assessment (Sci-K)*, Nara, Japan, CEUR-WS.org, Nov. 2025. DOI:10.18154/RWTH-2026-04351
 
 A formal citation file is included as `CITATION.cff` for automated reference managers and repositories.
 

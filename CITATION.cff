@@ -14,11 +14,11 @@ authors:
   - name: Data Stream Management and Analysis Group (RWTH Aachen University)
 
 version: 1.0.0
-date-released: # TODO (set on public release)
+date-released: 21.04.2026
 
 license: GPL-3.0-only
 
-repository-code: # TODO (set on public release)
+repository-code: "https://github.com/dsma-org/konda"
 
 preferred-citation:
   type: conference-paper
@@ -38,3 +38,4 @@ preferred-citation:
   year: 2025
   location:
     name: Nara, Japan
+  doi: "https://doi.org/10.18154/RWTH-2026-04351"
