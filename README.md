@@ -283,6 +283,11 @@ The tool is a pipeline of six steps.
 
 ---
 
+## Video
+Find a video demonstrating KONDA's functionalities at YouTube: [KONDA Demonstration Video](https://www.youtube.com/watch?v=7KA0dFhi_os)
+
+---
+
 ## Citation
 
 If you use KONDA in your research or application, please cite the following paper:
@@ -305,6 +310,7 @@ See the `LICENSE` file for the full license text.
 - **Title**: KONDA
 - **Description**: An LLM-based tool for semantic annotation and knowledge graph creation using ontologies for research data.
 - **Keywords**: semantic annotation, knowledge graphs, ontologies, research data management, large language model
-- **Authors**: Martin Görz, Data Stream Management and Analysis Group (RWTH Aachen University)
+- **Authors**: Martin Görz & Data Stream Management and Analysis Group (RWTH Aachen University)
+- **Supervisor**: Soo-Yon Kim
 - **Repository Created On**: 20 April, 2026
 - **License**: GNU GPLv3
