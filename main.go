@@ -55,13 +55,14 @@ func main() {
 	}
 
 	handlerMux := handler.SetupRoutes(app)
+	host := getEnv("BACKEND_HOST", "localhost")
 	port, err := strconv.Atoi(getEnv("BACKEND_PORT", "5050"))
 	if err != nil {
 		slog.Error("Failed to convert BACKEND_PORT variable", "details", err.Error())
 		return
 	}
 	server := &http.Server{
-		Addr:         fmt.Sprintf("localhost:%d", port),
+		Addr:         fmt.Sprintf("%s:%d", host, port),
 		ReadTimeout:  5 * time.Minute,
 		WriteTimeout: 10 * time.Minute,
 		Handler:      handlerMux,

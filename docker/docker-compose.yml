@@ -1,0 +1,58 @@
+name: konda
+services:
+  neo4j:
+    image: graphstack/dozerdb:5.26.27
+    restart: unless-stopped
+    # ports:
+    #   - 127.0.0.1:7474:7474
+    #   - 127.0.0.1:7687:7687
+    volumes:
+      - ./neo4j/plugins:/plugins
+      - ./neo4j/data:/data
+      - ./neo4j/logs:/logs
+    depends_on:
+      neo4j-init:
+        condition: service_completed_successfully
+    environment:
+      NEO4J_PLUGINS: '["apoc", "genai", "n10s"]'
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
+      # NEO4J_apoc_export_file_enabled: true
+      # NEO4J_apoc_import_file_enabled: true
+      NEO4J_server_unmanaged-extension-classes: 'n10s.endpoint=/rdf'
+      NEO4J_dbms_security_http-auth-allowlist: '|/|/browser.*|/db/.*|/rdf/.*'
+      NEO4J_dbms_security_procedures_allowlist: 'apoc.*,n10s.*,genai.*'
+      NEO4J_dbms_security_procedures_unrestricted: 'apoc.*,n10s.*,genai.*'
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:7474/ || exit 1"]
+      start_period: 15s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  neo4j-init:
+    image: graphstack/dozerdb:5.26.27
+    restart: "no"
+    volumes:
+      - ./neo4j/data:/data
+      - ../dump:/dump:ro
+    command: ["neo4j-admin", "database", "load", "basedb", "--from-path=/dump", "--overwrite-destination=true"]
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    restart: unless-stopped
+    environment:
+      - BACKEND_HOST= # intentionally left empty to let docker bind to all interfaces
+      - NEO4J_DB_URL=neo4j://neo4j:7687
+      - NEO4J_HTTP_URL=http://neo4j:7474
+      - NEO4J_PASSWORD=${NEO4J_PASSWORD}
+      - AOAI_CHAT_COMPLETIONS_API_KEY=${AOAI_CHAT_COMPLETIONS_API_KEY}
+      - AOAI_CHAT_COMPLETIONS_ENDPOINT=${AOAI_CHAT_COMPLETIONS_ENDPOINT}
+      - AOAI_CHAT_COMPLETIONS_MODEL=${AOAI_CHAT_COMPLETIONS_MODEL}
+      - AOAI_SYSTEM_MESSAGE=${AOAI_SYSTEM_MESSAGE}
+      - NEO4J_GENAI_RESOURCE=${NEO4J_GENAI_RESOURCE}
+      - NEO4J_GENAI_EMBEDDING_DEPLOYMENT=${NEO4J_GENAI_EMBEDDING_DEPLOYMENT}
+    ports:
+      - 127.0.0.1:${BACKEND_PORT:-5050}:5050
+    depends_on:
+      neo4j:
+        condition: service_healthy

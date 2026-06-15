@@ -1,0 +1,4 @@
+# ignore LFS data to prevent unnecessarily large build context
+dump/
+node_modules/
+docker/
