@@ -13,7 +13,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     go mod download && go mod verify
 COPY . .
-COPY --from=frontend-build-stage /app/web/static/generated-frontend/ ./web/static/
+COPY --from=frontend-build-stage /app/web/static/ ./web/static/
 # production build
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
