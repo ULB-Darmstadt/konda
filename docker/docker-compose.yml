@@ -3,6 +3,12 @@ services:
   neo4j:
     image: graphstack/dozerdb:5.26.27
     restart: unless-stopped
+    entrypoint:
+      - tini
+      - -g
+      - --
+      - /bin/bash
+      - /startup/konda-start-with-basedb.sh
     # ports:
     #   - 127.0.0.1:7474:7474
     #   - 127.0.0.1:7687:7687
@@ -10,14 +16,12 @@ services:
       - ./neo4j/plugins:/plugins
       - ./neo4j/data:/data
       - ./neo4j/logs:/logs
-    depends_on:
-      neo4j-init:
-        condition: service_completed_successfully
+      - ../dump:/dump:ro
+      - ./neo4j/start-with-basedb.sh:/startup/konda-start-with-basedb.sh:ro
     environment:
-      NEO4J_PLUGINS: '["apoc", "genai", "n10s"]'
+      KONDA_BASE_DB: basedb
       NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
-      # NEO4J_apoc_export_file_enabled: true
-      # NEO4J_apoc_import_file_enabled: true
+      NEO4J_PLUGINS: '["apoc", "genai", "n10s"]'
       NEO4J_server_unmanaged-extension-classes: 'n10s.endpoint=/rdf'
       NEO4J_dbms_security_http-auth-allowlist: '|/|/browser.*|/db/.*|/rdf/.*'
       NEO4J_dbms_security_procedures_allowlist: 'apoc.*,n10s.*,genai.*'
@@ -28,13 +32,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-  neo4j-init:
-    image: graphstack/dozerdb:5.26.27
-    restart: "no"
-    volumes:
-      - ./neo4j/data:/data
-      - ../dump:/dump:ro
-    command: ["neo4j-admin", "database", "load", "basedb", "--from-path=/dump", "--overwrite-destination=true"]
   app:
     build:
       context: ..
