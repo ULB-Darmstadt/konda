@@ -8,22 +8,22 @@ services:
       - -g
       - --
       - /bin/bash
-      - /startup/konda-start-with-basedb.sh
+      - /startup/start-with-basedb.sh
     # ports:
     #   - 127.0.0.1:7474:7474
     #   - 127.0.0.1:7687:7687
     volumes:
-      - ./neo4j/plugins:/plugins
-      - ./neo4j/data:/data
-      - ./neo4j/logs:/logs
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - neo4j_plugins:/plugins
       - ../dump:/dump:ro
-      - ./neo4j/start-with-basedb.sh:/startup/konda-start-with-basedb.sh:ro
+      - ./start-neo4j-with-basedb.sh:/startup/start-with-basedb.sh:ro
     environment:
       KONDA_BASE_DB: basedb
       NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
       NEO4J_PLUGINS: '["apoc", "genai", "n10s"]'
-      NEO4J_server_unmanaged-extension-classes: 'n10s.endpoint=/rdf'
-      NEO4J_dbms_security_http-auth-allowlist: '|/|/browser.*|/db/.*|/rdf/.*'
+      NEO4J_server_unmanaged__extension__classes: 'n10s.endpoint=/rdf'
+      NEO4J_dbms_security_http__auth__allowlist: '|/|/browser.*|/db/.*|/rdf/.*'
       NEO4J_dbms_security_procedures_allowlist: 'apoc.*,n10s.*,genai.*'
       NEO4J_dbms_security_procedures_unrestricted: 'apoc.*,n10s.*,genai.*'
     healthcheck:
@@ -37,8 +37,11 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     restart: unless-stopped
+    volumes:
+      - ./konda-tokenTracker.txt:/app/konda-tokenTracker.txt
     environment:
       - BACKEND_HOST= # intentionally left empty to let docker bind to all interfaces
+      - TOKEN_TRACKER_FILE=/app/konda-tokenTracker.txt
       - NEO4J_DB_URL=neo4j://neo4j:7687
       - NEO4J_HTTP_URL=http://neo4j:7474
       - NEO4J_PASSWORD=${NEO4J_PASSWORD}
@@ -53,3 +56,7 @@ services:
     depends_on:
       neo4j:
         condition: service_healthy
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  neo4j_plugins:
