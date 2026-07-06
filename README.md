@@ -36,6 +36,8 @@
 
 KONDA is a web-based application designed to assist researchers in managing research data effectively. It leverages AI to extract metadata from datasets and papers, transforming them into structured knowledge representations like ontologies and knowledge graphs.
 
+>⚠️ **LLM Disclaimer:** KONDA integrates with external language models but does not ship, host, or provide model access. Configure your own provider in `.env` (see `.env.example`). API keys, usage, and provider terms remain the responsibility of the user.
+
 ### Workflow
 
 The following diagram illustrates the main processing pipeline of KONDA, from dataset upload to knowledge graph creation and RDF export.
