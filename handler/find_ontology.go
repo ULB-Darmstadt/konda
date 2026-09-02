@@ -33,7 +33,7 @@ func (h *Handlers) GetFindOntologyHandler(w http.ResponseWriter, r *http.Request
 	}
 	eCount, err := h.App.GetExtractionCount(sessionID)
 	if err != nil {
-		slog.Error("Error getting Prefix from store", "details", err)
+		slog.Error("Error getting extraction count from store", "details", err)
 	}
 	prefix, err := h.App.GetPrefix(sessionID)
 	if err != nil {

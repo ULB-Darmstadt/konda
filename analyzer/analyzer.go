@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"math"
 	"os"
 	"path/filepath"
@@ -615,9 +616,12 @@ func initializeChatter() {
 		return
 	}
 
-	err := godotenv.Load()
-	if err != nil {
-		return
+	if _, err := os.Stat(".env"); err == nil {
+		err := godotenv.Load()
+		if err != nil {
+			slog.Warn("Could not load .env", "details", err.Error())
+			return
+		}
 	}
 
 	apiKey := os.Getenv("AOAI_CHAT_COMPLETIONS_API_KEY")
